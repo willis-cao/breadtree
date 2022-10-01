@@ -26,10 +26,9 @@ or the news.
 
 
 ## User Stories
-- As a user, I want to be able to add a book to my reading list
-- As a user, I want to be able to add a new word and its definition
-in my native language to the list of words I learned
-- As a user, I want to be able to create tiered categories for the
-words I learn
+- As a user, I want to be able to add a book to my reading list.
+- As a user, I want to be able to add a new word and its definition to the
+list of words I learned from that book.
+- As a user, I want to be able to categorize the new words I learn.
 - As a user, I want to be able to see a summary of what I learned
-after completing a book
+after completing a book.
