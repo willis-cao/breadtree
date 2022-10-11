@@ -46,7 +46,7 @@ public class BreadtreeApp {
         init();
 
         while (keepGoing) {
-            displayMenu();
+            displayMainMenu();
             command = input.next();
             command = command.toLowerCase();
 
@@ -66,7 +66,7 @@ public class BreadtreeApp {
         boolean notebookSelected = false;
         for (Notebook notebook:notebooks) {
             if (command.equals(Integer.toString(notebooks.indexOf(notebook) + 1))) {
-                notebook.printNotebook();
+                accessNotebook(notebook);
                 notebookSelected = true;
             }
         }
@@ -95,7 +95,7 @@ public class BreadtreeApp {
     }
 
     // EFFECTS: displays menu of options to user
-    private void displayMenu() {
+    private void displayMainMenu() {
         System.out.println("\nYour notebooks:");
         String listOfNotebooksText = "";
         int notebookCounter = 1;
@@ -108,6 +108,32 @@ public class BreadtreeApp {
         System.out.println("\tn -> make a new notebook");
         System.out.println("\td -> delete a notebook");
         System.out.println("\tq -> quit");
+    }
+
+    private void accessNotebook(Notebook notebook) {
+        System.out.println(notebook.getName());
+        List<Entry> entries = notebook.getEntries();
+        for (Entry entry:entries) {
+            System.out.println("(" + Integer.toString(entries.indexOf(entry) + 1) + ") " + entry.getWord() + ": " + entry.getDefinition());
+        }
+        System.out.println("Enter a new word below or select from one of the following options");
+        System.out.println("\te -> edit a word/definition");
+        System.out.println("\td -> delete a word/definition");
+        System.out.println("\tq -> quit");
+        String selection = input.next();
+        if (selection.equals("e")) {
+            //editEntry();
+        } else if (selection.equals("d")) {
+            //deleteEntry();
+        } else if (!selection.equals("")) {
+            String newWord = selection;
+            System.out.println("Enter the definition for " + newWord);
+            selection = input.next();
+            String newDefinition = selection;
+            Entry entry = new Entry(newWord, newDefinition);
+            notebook.addEntry(entry);
+        }
+        accessNotebook(notebook);
     }
 
     private void menuMakeNotebook() {

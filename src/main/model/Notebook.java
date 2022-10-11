@@ -17,8 +17,8 @@ public class Notebook {
         entries = new ArrayList<Entry>();
     }
 
-    public void addEntry() {
-
+    public void addEntry(Entry entry) {
+        entries.add(entry);
     }
 
     public void printNotebook() {
@@ -33,6 +33,10 @@ public class Notebook {
 
     public int getID() {
         return id;
+    }
+
+    public List<Entry> getEntries() {
+        return entries;
     }
 
 }
