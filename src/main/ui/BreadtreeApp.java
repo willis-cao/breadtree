@@ -25,17 +25,13 @@ public class BreadtreeApp {
         notebooks.add(newNotebook);
     }
 
+    private void deleteNotebook(Notebook notebook) {
+        notebooks.remove(notebook);
+    }
+
     private int generateID() {
         idCounter++;
         return idCounter;
-    }
-
-    private void getNotebook(String name) {
-
-    }
-
-    private void addEntry(String word, String definition) {
-
     }
 
     // The code for console-related UI below (runBreadtree(), init(), processCommand(), displayMenu())
@@ -76,9 +72,9 @@ public class BreadtreeApp {
         }
         if (notebookSelected == false) {
             if (command.equals("n")) {
-                System.out.println("n was pressed");
+                menuMakeNotebook();
             } else if (command.equals("d")) {
-                System.out.println("d was pressed");
+                menuDeleteNotebook();
             } else if (command.equals("q")) {
                 System.out.println("q was pressed");
             } else {
@@ -112,5 +108,29 @@ public class BreadtreeApp {
         System.out.println("\tn -> make a new notebook");
         System.out.println("\td -> delete a notebook");
         System.out.println("\tq -> quit");
+    }
+
+    private void menuMakeNotebook() {
+        System.out.println("Enter the name for your new notebook:");
+        makeNotebook(input.next());
+    }
+
+    private void menuDeleteNotebook() {
+        System.out.println("Enter the number of the notebook to delete");
+        String selection = input.next();
+        for (Notebook notebook:notebooks) {
+            if (selection.equals(Integer.toString(notebooks.indexOf(notebook) + 1))) {
+                System.out.println("Are you sure you want to delete the notebook below (y/n)? This action cannot be reversed.");
+                System.out.println(notebook.getName());
+                selection = input.next();
+                if (selection.equals("y")) {
+                    deleteNotebook(notebook);
+                    System.out.println("Notebook was deleted.");
+                } else if (selection.equals("n")) {
+                    System.out.println("Notebook was not deleted.");
+                }
+            }
+        }
+
     }
 }
