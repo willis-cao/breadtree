@@ -18,4 +18,12 @@ public class Entry {
     public String getDefinition() {
         return definition;
     }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
 }

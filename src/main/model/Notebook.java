@@ -21,6 +21,10 @@ public class Notebook {
         entries.add(entry);
     }
 
+    public void deleteEntry(Entry entry) {
+        entries.remove(entry);
+    }
+    
     public void printNotebook() {
         for (Entry entry:entries) {
             System.out.println(entry.getWord() + ": " + entry.getDefinition());

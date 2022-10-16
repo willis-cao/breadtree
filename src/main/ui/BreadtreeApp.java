@@ -6,35 +6,48 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-//Represents a language-learning note-taking app containing a list of notebooks
+//Represents a language-learning note-taking app containing a list of notebooks,
+//each of which contains a list of entries (words and their definitions)
 public class BreadtreeApp {
 
     private Scanner input;
-
-    private List<Notebook> notebooks;
     private int idCounter;
+    private int state;
+    private List<Notebook> notebooks;
+    private Notebook currentNotebook;
 
+    // MODIFIES: this
+    // EFFECTS: sets idCounter, state, and notebooks fields to initial values and runs the application
     public BreadtreeApp() {
         idCounter = 0;
+        state = 0;
         notebooks = new ArrayList<Notebook>();
         runBreadtree();
     }
 
+    // MODIFIES: this
+    // EFFECTS: creates a new notebook with the given name and a unique identifying number
     private void makeNotebook(String name) {
         Notebook newNotebook = new Notebook(name, generateID());
         notebooks.add(newNotebook);
     }
 
+    // MODIFIES: this
+    // EFFECTS: removes the given notebook from the list of notebooks
     private void deleteNotebook(Notebook notebook) {
         notebooks.remove(notebook);
     }
 
+    // MODIFIES: this
+    // EFFECTS: generates a unique identifier
     private int generateID() {
         idCounter++;
         return idCounter;
     }
 
-    // The code for console-related UI below (runBreadtree(), init(), processCommand(), displayMenu())
+    // The code for console-related UI below
+    // (methods runBreadtree(), init(), processCommandMainMenu(), processCommandNotebookMenu,
+    // displayMainMenu(), displayNotebookMenu())
     // was adapted from CPSC 210 TellerApp
 
     // MODIFIES: this
@@ -46,43 +59,18 @@ public class BreadtreeApp {
         init();
 
         while (keepGoing) {
-            displayMainMenu();
+            chooseMenu(state);
             command = input.next();
-            command = command.toLowerCase();
-
+            //command = command.toLowerCase();
             if (command.equals("q")) {
                 keepGoing = false;
             } else {
-                processCommand(command);
+                chooseCommand(command);
             }
         }
-
         //System.out.println("\nGoodbye!");
     }
-
-    // MODIFIES: this
-    // EFFECTS: processes user command
-    private void processCommand(String command) {
-        boolean notebookSelected = false;
-        for (Notebook notebook:notebooks) {
-            if (command.equals(Integer.toString(notebooks.indexOf(notebook) + 1))) {
-                accessNotebook(notebook);
-                notebookSelected = true;
-            }
-        }
-        if (notebookSelected == false) {
-            if (command.equals("n")) {
-                menuMakeNotebook();
-            } else if (command.equals("d")) {
-                menuDeleteNotebook();
-            } else if (command.equals("q")) {
-                System.out.println("q was pressed");
-            } else {
-                System.out.println("Invalid command. Try again?");
-            }
-        }
-    }
-
+    
     // MODIFIES: this
     // EFFECTS: initializes scanner and demo notebooks
     private void init() {
@@ -94,7 +82,70 @@ public class BreadtreeApp {
         makeNotebook("The Crane of Gratitude");
     }
 
-    // EFFECTS: displays menu of options to user
+    // REQUIRES: state is 0 or 1
+    // EFFECTS: displays a menu depending on the current state of the application
+    // where 0 represents the main menu and 1 represents the notebook menu
+    private void chooseMenu(int state) {
+        if (state == 0) {
+            displayMainMenu();
+        } else if (state == 1) {
+            displayNotebookMenu();
+        }
+    }
+
+    // EFFECTS: processes a given command depending on the current state of the application
+    // where 0 represents the main menu and 1 represents the notebook menu
+    private void chooseCommand(String command) {
+        if (state == 0) {
+            processCommandMainMenu(command);
+        } else if (state == 1) {
+            processCommandNotebookMenu(command);
+        }
+    }
+    
+    // MODIFIES: this
+    // EFFECTS: processes user command on the main menu
+    private void processCommandMainMenu(String command) {
+        boolean notebookSelected = false;
+        for (Notebook notebook:notebooks) {
+            if (command.equals(Integer.toString(notebooks.indexOf(notebook) + 1))) {
+                state = 1;
+                currentNotebook = notebook;
+                notebookSelected = true;
+            }
+        }
+        if (notebookSelected == false) {
+            if (command.equals("m")) {
+                menuMakeNotebook();
+            } else if (command.equals("d")) {
+                menuDeleteNotebook();
+            } else {
+                System.out.println("Invalid command. Try again?");
+            }
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: processes user command on the notebook menu
+    private void processCommandNotebookMenu(String command) {
+        if (command.equals("e")) {
+            menuEditEntry();
+        } else if (command.equals("d")) {
+            menuDeleteEntry();
+        } else if (command.equals("r")) {
+            currentNotebook = null;
+            state = 0;            
+        } else if (!command.equals("")) {
+            String newWord = command;
+            System.out.println("Enter the definition for " + newWord);
+            command = input.next();
+            String newDefinition = command;
+            Entry entry = new Entry(newWord, newDefinition);
+            currentNotebook.addEntry(entry);
+        }
+    }
+    
+    // EFFECTS: displays the main menu to user
     private void displayMainMenu() {
         System.out.println("\nYour notebooks:");
         String listOfNotebooksText = "";
@@ -105,58 +156,88 @@ public class BreadtreeApp {
         }
         System.out.println(listOfNotebooksText);
         System.out.println("\nEnter the number for the notebook you wish to access or choose from the options below:");
-        System.out.println("\tn -> make a new notebook");
-        System.out.println("\td -> delete a notebook");
-        System.out.println("\tq -> quit");
+        System.out.println("\t[m]ake a new notebook");
+        System.out.println("\t[d]elete a notebook");
+        System.out.println("\t[q]uit");
     }
 
-    private void accessNotebook(Notebook notebook) {
-        System.out.println(notebook.getName());
-        List<Entry> entries = notebook.getEntries();
+    // EFFECTS: displays the contents of a notebook and the notebook menu to user
+    private void displayNotebookMenu() {
+        System.out.println(currentNotebook.getName());
+        List<Entry> entries = currentNotebook.getEntries();
         for (Entry entry:entries) {
-            System.out.println("(" + Integer.toString(entries.indexOf(entry) + 1) + ") " + entry.getWord() + ": " + entry.getDefinition());
+            System.out.println("(" + Integer.toString(entries.indexOf(entry) + 1) + ") "
+                                   + entry.getWord() + ": " + entry.getDefinition());
         }
-        System.out.println("Enter a new word below or select from one of the following options");
-        System.out.println("\te -> edit a word/definition");
-        System.out.println("\td -> delete a word/definition");
-        System.out.println("\tq -> quit");
-        String selection = input.next();
-        if (selection.equals("e")) {
-            //editEntry();
-        } else if (selection.equals("d")) {
-            //deleteEntry();
-        } else if (!selection.equals("")) {
-            String newWord = selection;
-            System.out.println("Enter the definition for " + newWord);
-            selection = input.next();
-            String newDefinition = selection;
-            Entry entry = new Entry(newWord, newDefinition);
-            notebook.addEntry(entry);
-        }
-        accessNotebook(notebook);
+        System.out.println(
+                "Enter a new word below or select from one of the following options: "
+                        + "[e]dit, [d]elete, [r]eturn to main menu");
     }
 
+    // MODIFIES: this
+    // EFFECTS: makes a new notebook with the given name provided by the user in the console
     private void menuMakeNotebook() {
         System.out.println("Enter the name for your new notebook:");
         makeNotebook(input.next());
     }
 
+    // MODIFIES: this
+    // EFFECTS: deletes the notebook selected by the user in the console
     private void menuDeleteNotebook() {
         System.out.println("Enter the number of the notebook to delete");
         String selection = input.next();
-        for (Notebook notebook:notebooks) {
-            if (selection.equals(Integer.toString(notebooks.indexOf(notebook) + 1))) {
-                System.out.println("Are you sure you want to delete the notebook below (y/n)? This action cannot be reversed.");
-                System.out.println(notebook.getName());
-                selection = input.next();
-                if (selection.equals("y")) {
-                    deleteNotebook(notebook);
-                    System.out.println("Notebook was deleted.");
-                } else if (selection.equals("n")) {
-                    System.out.println("Notebook was not deleted.");
-                }
+        try {
+            Notebook selectedNotebook = notebooks.get(Integer.parseInt(selection) - 1);
+            System.out.println(
+                    "Are you sure you want to delete the notebook below [y/n]? This action cannot be reversed.");
+            System.out.println(selectedNotebook.getName());
+            selection = input.next();
+            if (selection.equals("y")) {
+                deleteNotebook(selectedNotebook);
+                System.out.println("Notebook was deleted.");
+            } else if (selection.equals("n")) {
+                System.out.println("Notebook was not deleted.");
             }
+        } catch (Exception e) {
+            System.out.println("Invalid notebook!");
         }
+    }
 
+    // MODIFIES: this
+    // EFFECTS: edits the word or definition of the entry selected by the user in the console
+    private void menuEditEntry() {
+        System.out.println("Enter the number of the entry to edit:");
+        String selection = input.next();
+        try {
+            Entry selectedEntry = currentNotebook.getEntries().get(Integer.parseInt(selection) - 1);
+            System.out.println("Edit the [w]ord or [d]efinition?");
+            selection = input.next();
+            if (selection.equals("w")) {
+                System.out.println("Change " + selectedEntry.getWord() + " to?");
+                selection = input.next();
+                selectedEntry.setWord(selection);
+            } else if (selection.equals("d")) {
+                System.out.println("Change " + selectedEntry.getDefinition() + " to?");
+                selection = input.next();
+                selectedEntry.setDefinition(selection);
+            } else {
+                System.out.println("Invalid command. Try again?");
+            }
+        } catch (Exception e) {
+            System.out.println("Invalid entry!");
+        }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: deletes the entry selected by the user in the console
+    private void menuDeleteEntry() {
+        System.out.println("Enter the number of the entry to delete:");
+        String selection = input.next();
+        try {
+            Entry selectedEntry = currentNotebook.getEntries().get(Integer.parseInt(selection) - 1);
+            currentNotebook.deleteEntry(selectedEntry);
+        } catch (Exception e) {
+            System.out.println("Invalid entry!");
+        }
     }
 }
