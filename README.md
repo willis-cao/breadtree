@@ -1,34 +1,24 @@
 # Breadtree: Learning Languages by Reading
 
 ## Project Proposal
-Reading books, short stories, newspapers, and other material
+Reading books (or short stories, newspapers, etc.,
+henceforth referred to as "books" for simplicity)
 written in a language is a fun and effective way to learn
 new vocabulary, grammar, and cultural perspectives in their
 natural contexts. This strategy is generally used by intermediate and
 advanced learners of a language with adequate reading comprehension
 skills.
 
-**Breadtree is an application that aims to provide an interface
+**Breadtree is a notebook application that aims to provide an interface
 for the user to record, relate, and consolidate new
-vocabulary/grammar/concepts as the user reads**. Repeated exposure
-is known to improve memory and recall--language learners often
-take advantage of this using flashcards. Despite being very
-effective, flashcards have a few drawbacks. First, vocabulary/grammar/concepts
-generally exist as independent entities (cards). Second, flashcard
-reviewing is often tedious. In a video by
-YouTuber Matt vs Japan (https://www.youtube.com/watch?v=u3sqHvdpBwM),
-Matt describes how flashcards demand significant daily time
-investment, especially in the later stages of learning.
-While flashcards may be one of the most effective and fast ways 
-to memorize vocabulary and grammar, there is an argument that the time 
-spent reviewing cards would be better spent reading books, short stories,
-or the news. 
+vocabulary/grammar/concepts (henceforth referred to as "words") as the user reads**. 
+Users will be able to create separate notebooks for each book they read in which they
+can add words and their definitions. Users will then be able to review the words
+in one or more notebooks through flashcards.
 
 
 ## User Stories
-- As a user, I want to be able to add a book to my reading list.
-- As a user, I want to be able to add a new word and its definition to the
-list of words I learned from that book.
-- As a user, I want to be able to categorize the new words I learn.
-- As a user, I want to be able to see a summary of what I learned
-after completing a book.
+- As a user, I want to be able to make a notebook representing a book.
+- As a user, I want to be able to add a new word and its definition to a notebook.
+- As a user, I want to be able to assign categorical tags to words.
+- As a user, I want to be able to review flashcards of a given category.

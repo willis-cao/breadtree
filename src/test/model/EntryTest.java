@@ -6,4 +6,23 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class EntryTest {
+    @BeforeEach
+    void runBefore() {
+
+    }
+
+    @Test
+    void testConstructor() {
+
+    }
+
+    @Test
+    void testSetWord() {
+
+    }
+
+    @Test
+    void testSetDefinition() {
+
+    }
 }
