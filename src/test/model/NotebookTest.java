@@ -11,20 +11,19 @@ class NotebookTest {
 
     @BeforeEach
     void runBefore() {
-        notebookA = new Notebook("My Notebook", 100);
+        notebookA = new Notebook("My Notebook");
     }
 
     @Test
     void testConstructor() {
         assertEquals("My Notebook", notebookA.getName());
-        assertEquals(100, notebookA.getID());
         assertEquals(null, notebookA.getEntries());
     }
 
     @Test
     void testAddEntry() {
-        Entry entryA = new Entry("", "");
-        notebookA.addEntry();
+        Entry entryA = new Entry("", "", null);
+
     }
 
     @Test

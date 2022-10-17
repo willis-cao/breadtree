@@ -7,14 +7,20 @@ import java.util.List;
 public class Notebook {
 
     private String name;
-    private int id;
 
     private List<Entry> entries;
 
-    public Notebook(String name, int id) {
+    public Notebook(String name) {
         this.name = name;
-        this.id = id;
         entries = new ArrayList<Entry>();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public List<Entry> getEntries() {
+        return entries;
     }
 
     public void addEntry(Entry entry) {
@@ -24,23 +30,18 @@ public class Notebook {
     public void deleteEntry(Entry entry) {
         entries.remove(entry);
     }
-    
-    public void printNotebook() {
+
+    public List<Entry> getEntriesTagged(List<String> tags) {
+        List<Entry> taggedEntries = new ArrayList<>();
         for (Entry entry:entries) {
-            System.out.println(entry.getWord() + ": " + entry.getDefinition());
+            for (String entryTag:entry.getTags()) {
+                if (tags.contains(entryTag)) {
+                    taggedEntries.add(entry);
+                    break;
+                }
+            }
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getID() {
-        return id;
-    }
-
-    public List<Entry> getEntries() {
-        return entries;
+        return taggedEntries;
     }
 
 }

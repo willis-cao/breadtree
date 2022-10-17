@@ -11,24 +11,22 @@ import java.util.Scanner;
 public class BreadtreeApp {
 
     private Scanner input;
-    private int idCounter;
     private int state;
     private List<Notebook> notebooks;
     private Notebook currentNotebook;
 
     // MODIFIES: this
-    // EFFECTS: sets idCounter, state, and notebooks fields to initial values and runs the application
+    // EFFECTS: sets state and notebooks fields to initial values and runs the application
     public BreadtreeApp() {
-        idCounter = 0;
         state = 0;
         notebooks = new ArrayList<Notebook>();
         runBreadtree();
     }
 
     // MODIFIES: this
-    // EFFECTS: creates a new notebook with the given name and a unique identifying number
+    // EFFECTS: creates a new notebook with the given name and adds it to the list of notebooks
     private void makeNotebook(String name) {
-        Notebook newNotebook = new Notebook(name, generateID());
+        Notebook newNotebook = new Notebook(name);
         notebooks.add(newNotebook);
     }
 
@@ -36,13 +34,6 @@ public class BreadtreeApp {
     // EFFECTS: removes the given notebook from the list of notebooks
     private void deleteNotebook(Notebook notebook) {
         notebooks.remove(notebook);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: generates a unique identifier
-    private int generateID() {
-        idCounter++;
-        return idCounter;
     }
 
     // The code for console-related UI below
@@ -68,7 +59,6 @@ public class BreadtreeApp {
                 chooseCommand(command);
             }
         }
-        //System.out.println("\nGoodbye!");
     }
     
     // MODIFIES: this
@@ -136,11 +126,15 @@ public class BreadtreeApp {
             currentNotebook = null;
             state = 0;            
         } else if (!command.equals("")) {
-            String newWord = command;
-            System.out.println("Enter the definition for " + newWord);
-            command = input.next();
-            String newDefinition = command;
-            Entry entry = new Entry(newWord, newDefinition);
+            String[] wordComponents = command.split("\\s*,\\s*");
+            List<String> tags = new ArrayList<>();
+            for (int i = 2; i < wordComponents.length; i++) {
+                tags.add(wordComponents[i]);
+            }
+            Entry entry = new Entry(wordComponents[0], wordComponents[1], new ArrayList<>());
+            for (String tag:tags) {
+                entry.addTag(tag);
+            }
             currentNotebook.addEntry(entry);
         }
     }
@@ -166,11 +160,13 @@ public class BreadtreeApp {
         System.out.println(currentNotebook.getName());
         List<Entry> entries = currentNotebook.getEntries();
         for (Entry entry:entries) {
-            System.out.println("(" + Integer.toString(entries.indexOf(entry) + 1) + ") "
-                                   + entry.getWord() + ": " + entry.getDefinition());
+            System.out.println("(" + (entries.indexOf(entry) + 1) + ") "
+                                    + entry.getWord() + ": " + entry.getDefinition() + " ["
+                                    + entry.printTags() + "]");
         }
         System.out.println(
-                "Enter a new word below or select from one of the following options: "
+                "Enter the information for a new word (e.g., word, definition, tag1, tag2, etc.)"
+                        + " or select from one of the following options: "
                         + "[e]dit, [d]elete, [r]eturn to main menu");
     }
 
