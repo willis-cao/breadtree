@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Scanner;
 
 //Represents a language-learning note-taking app containing a list of notebooks,
-//each of which contains a list of entries (words and their definitions)
+//each of which contains a list of entries (each containing a word, definition, and tags)
 public class BreadtreeApp {
 
     private Scanner input;
@@ -19,7 +19,7 @@ public class BreadtreeApp {
     // EFFECTS: sets state and notebooks fields to initial values and runs the application
     public BreadtreeApp() {
         state = 0;
-        notebooks = new ArrayList<Notebook>();
+        notebooks = new ArrayList<>();
         runBreadtree();
     }
 
@@ -45,14 +45,11 @@ public class BreadtreeApp {
     // EFFECTS: processes user input
     private void runBreadtree() {
         boolean keepGoing = true;
-        String command = null;
-
+        String command;
         init();
-
         while (keepGoing) {
-            chooseMenu(state);
+            chooseMenu();
             command = input.next();
-            //command = command.toLowerCase();
             if (command.equals("q")) {
                 keepGoing = false;
             } else {
@@ -72,10 +69,9 @@ public class BreadtreeApp {
         makeNotebook("The Crane of Gratitude");
     }
 
-    // REQUIRES: state is 0 or 1
     // EFFECTS: displays a menu depending on the current state of the application
     // where 0 represents the main menu and 1 represents the notebook menu
-    private void chooseMenu(int state) {
+    private void chooseMenu() {
         if (state == 0) {
             displayMainMenu();
         } else if (state == 1) {
@@ -95,6 +91,7 @@ public class BreadtreeApp {
     
     // MODIFIES: this
     // EFFECTS: processes user command on the main menu
+    // including selecting, making, or deleting a notebook
     private void processCommandMainMenu(String command) {
         boolean notebookSelected = false;
         for (Notebook notebook:notebooks) {
@@ -104,7 +101,7 @@ public class BreadtreeApp {
                 notebookSelected = true;
             }
         }
-        if (notebookSelected == false) {
+        if (!notebookSelected) {
             if (command.equals("m")) {
                 menuMakeNotebook();
             } else if (command.equals("d")) {
@@ -117,6 +114,7 @@ public class BreadtreeApp {
 
     // MODIFIES: this
     // EFFECTS: processes user command on the notebook menu
+    // including adding, editing, or deleting an entry, or returning to the main menu
     private void processCommandNotebookMenu(String command) {
         if (command.equals("e")) {
             menuEditEntry();
@@ -155,19 +153,19 @@ public class BreadtreeApp {
         System.out.println("\t[q]uit");
     }
 
-    // EFFECTS: displays the contents of a notebook and the notebook menu to user
+    // EFFECTS: displays the contents of a notebook (a list of words, their definitions, and tags)
+    // and the notebook menu to user
     private void displayNotebookMenu() {
         System.out.println(currentNotebook.getName());
         List<Entry> entries = currentNotebook.getEntries();
         for (Entry entry:entries) {
             System.out.println("(" + (entries.indexOf(entry) + 1) + ") "
                                     + entry.getWord() + ": " + entry.getDefinition() + " ["
-                                    + entry.printTags() + "]");
+                                    + entry.tagsAsString() + "]");
         }
-        System.out.println(
-                "Enter the information for a new word (e.g., word, definition, tag1, tag2, etc.)"
-                        + " or select from one of the following options: "
-                        + "[e]dit, [d]elete, [r]eturn to main menu");
+        System.out.println("\nEnter the information for a new word (e.g., word, definition, tag1, tag2, etc.)");
+        System.out.println("or select from one of the following options: [e]dit, [d]elete, [r]eturn to main menu");
+
     }
 
     // MODIFIES: this

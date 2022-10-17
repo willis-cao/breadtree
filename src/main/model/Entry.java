@@ -10,43 +10,55 @@ public class Entry {
     private String definition;
     private List<String> tags;
 
+    // EFFECTS: constructs an entry with the given word, definition, and list of tags
     public Entry(String word, String definition, List<String> tags) {
         this.word = word;
         this.definition = definition;
         this.tags = tags;
     }
 
+    // EFFECTS: returns the word of the entry
     public String getWord() {
         return word;
     }
 
+    // EFFECTS: returns the definition of the entry
     public String getDefinition() {
         return definition;
     }
 
+    // EFFECTS: returns the list of tags of the entry
     public List<String> getTags() {
         return tags;
     }
 
-    public String printTags() {
-        String tagString = "";
+    // EFFECTS: returns a list of comma-separated tags as a String
+    public String tagsAsString() {
+        String tagAsString = "";
         for (int i = 0; i < tags.size(); i++) {
-            tagString += tags.get(i);
+            tagAsString += tags.get(i);
             if (!(i == tags.size() - 1)) {
-                tagString += ", ";
+                tagAsString += ", ";
             }
         }
-        return tagString;
+        return tagAsString;
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets the entry's word to the given word
     public void setWord(String word) {
         this.word = word;
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets the entry's definition to the given definition
     public void setDefinition(String definition) {
         this.definition = definition;
     }
 
+    // MODIFIES: this
+    // EFFECTS: adds the given tag to the list of tags provided it is not a duplicate,
+    // and cleans the list of tags (sets all tags to lower case and sorts alphabetically)
     public void addTag(String tag) {
         if (!tags.contains(tag)) {
             tags.add(tag);
@@ -54,6 +66,8 @@ public class Entry {
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets all tags to lower case and sorts them alphabetically
     private void cleanTags() {
         for (String tag:tags) {
             tags.set(tags.indexOf(tag), tag.toLowerCase());
