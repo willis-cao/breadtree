@@ -23,3 +23,5 @@ in one or more notebooks through flashcards (to be implemented in the future).
 - As a user, I want to be able to assign categorical tags to words.
 - As a user, I want to be able to view a list of each word, it's definition, and its tags
 in a notebook.
+- (P2) As a user, I want to be able to save my notebooks to file.
+- (P2) As a user, I want to be able to load all of my notebooks from file.
