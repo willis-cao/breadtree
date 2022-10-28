@@ -1,0 +1,64 @@
+{"notebooks": [
+    {
+        "entries": [
+            {
+                "definition": "def1",
+                "word": "word1",
+                "tags": [
+                    "tag1",
+                    "tag2",
+                    "tag3"
+                ]
+            },
+            {
+                "definition": "def2",
+                "word": "word2",
+                "tags": [
+                    "tag1",
+                    "tag2"
+                ]
+            },
+            {
+                "definition": "def3",
+                "word": "word3",
+                "tags": ["tag4"]
+            }
+        ],
+        "name": "The Cat's Teacup"
+    },
+    {
+        "entries": [],
+        "name": "The Crane of Gratitude"
+    },
+    {
+        "entries": [{
+            "definition": "def4",
+            "word": "word4",
+            "tags": ["tag100"]
+        }],
+        "name": "Potato Notes"
+    },
+    {
+        "entries": [
+            {
+                "definition": "love",
+                "word": "i",
+                "tags": [
+                    "blue",
+                    "carrots",
+                    "red"
+                ]
+            },
+            {
+                "definition": "love",
+                "word": "i also",
+                "tags": [
+                    "blue",
+                    "carrots",
+                    "red"
+                ]
+            }
+        ],
+        "name": "Carrots"
+    }
+]}

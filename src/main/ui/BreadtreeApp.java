@@ -1,20 +1,18 @@
 package ui;
 
-import model.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
+import model.Breadtree;
+import model.Entry;
+import model.Notebook;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-//Represents a language-learning note-taking app containing a list of notebooks,
+//Represents a language-learning note-taking app containing a breadtree, or list of notebooks,
 //each of which contains a list of entries (each containing a word, definition, and tags)
 public class BreadtreeApp {
 
@@ -34,6 +32,7 @@ public class BreadtreeApp {
         breadtree = new Breadtree();
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
+        loadWorkRoom();
         runBreadtree();
     }
 
@@ -60,14 +59,10 @@ public class BreadtreeApp {
     }
     
     // MODIFIES: this
-    // EFFECTS: initializes scanner and demo notebooks
+    // EFFECTS: initializes scanner
     private void init() {
         input = new Scanner(System.in);
         input.useDelimiter("\n");
-
-        //Demo notebooks
-        breadtree.makeNotebook("The Cat's Teacup");
-        breadtree.makeNotebook("The Crane of Gratitude");
     }
 
     // EFFECTS: displays a menu depending on the current state of the application
@@ -108,6 +103,8 @@ public class BreadtreeApp {
                 menuMakeNotebook();
             } else if (command.equals("d")) {
                 menuDeleteNotebook();
+            } else if (command.equals("s")) {
+                saveBreadtree();
             } else {
                 System.out.println("Invalid command. Try again?");
             }
@@ -153,6 +150,7 @@ public class BreadtreeApp {
         System.out.println("\nEnter the number for the notebook you wish to access or choose from the options below:");
         System.out.println("\t[m]ake a new notebook");
         System.out.println("\t[d]elete a notebook");
+        System.out.println("\t[s]ave state");
         System.out.println("\t[q]uit");
     }
 
@@ -236,6 +234,31 @@ public class BreadtreeApp {
             currentNotebook.deleteEntry(selectedEntry);
         } catch (Exception e) {
             System.out.println("Invalid entry!");
+        }
+    }
+
+    // Adapted from CPSC 210 JsonSerializationDemo
+    // EFFECTS: saves breadtree to file
+    private void saveBreadtree() {
+        try {
+            jsonWriter.open();
+            jsonWriter.write(breadtree);
+            jsonWriter.close();
+            System.out.println("Saved to " + JSON_STORE);
+        } catch (FileNotFoundException e) {
+            System.out.println("Unable to write to file: " + JSON_STORE);
+        }
+    }
+
+    // Adapted from CPSC 210 JsonSerializationDemo
+    // MODIFIES: this
+    // EFFECTS: loads breadtree from file
+    private void loadWorkRoom() {
+        try {
+            breadtree = jsonReader.read();
+            System.out.println("Loaded from " + JSON_STORE);
+        } catch (IOException e) {
+            System.out.println("Unable to read from file: " + JSON_STORE);
         }
     }
 }

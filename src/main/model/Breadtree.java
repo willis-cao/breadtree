@@ -7,18 +7,26 @@ import persistence.Writable;
 import java.util.ArrayList;
 import java.util.List;
 
-//Represents a list of notebooks
+//Represents a breadtree containing a list of notebooks
 public class Breadtree implements Writable {
 
     private List<Notebook> notebooks;
 
-    // EFFECTS: constructs a Breadtree representing an (empty) list of notebooks
+    // EFFECTS: constructs a breadtree representing an (empty) list of notebooks
     public Breadtree() {
         notebooks = new ArrayList<>();
     }
 
+    // EFFECTS: returns the list of notebooks
     public List<Notebook> getNotebooks() {
         return notebooks;
+    }
+
+    // MODIFIES: this
+    // EFFECTS: adds the given notebook to the list of notebooks
+    // (for persistence)
+    public void addNotebook(Notebook notebook) {
+        notebooks.add(notebook);
     }
 
     // MODIFIES: this

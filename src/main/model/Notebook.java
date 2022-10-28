@@ -19,6 +19,13 @@ public class Notebook implements Writable {
         entries = new ArrayList<>();
     }
 
+    // EFFECTS: constructs a notebook with the given name and list of entries
+    // (for persistence)
+    public Notebook(String name, List<Entry> entries) {
+        this.name = name;
+        this.entries = entries;
+    }
+
     // EFFECTS: returns the name of the notebook
     public String getName() {
         return name;
