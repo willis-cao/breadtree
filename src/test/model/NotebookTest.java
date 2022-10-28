@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,9 +30,19 @@ class NotebookTest {
     }
 
     @Test
-    void testConstructor() {
-        assertEquals("Notebook A", notebookA.getName());
-        assertEquals(0, notebookA.getEntries().size());
+    void testConstructorName() {
+        Notebook notebookB = new Notebook("Notebook B");
+        assertEquals("Notebook B", notebookB.getName());
+        assertEquals(0, notebookB.getEntries().size());
+    }
+
+    @Test //TO DO
+    void testConstructorNameEntries() {
+        List<Entry> entries = new ArrayList<>();
+        entries.add(entryA);
+        Notebook notebookC = new Notebook("Notebook C", entries);
+        assertEquals("Notebook C", notebookC.getName());
+        assertEquals(1, notebookC.getEntries().size());
     }
 
     @Test
@@ -74,4 +86,14 @@ class NotebookTest {
         assertTrue(notebookA.getEntriesTagged(tagsB).contains(entryB));
         assertTrue(notebookA.getEntriesTagged(tagsB).contains(entryC));
     }
+
+    @Test
+    void testToJson() {
+        notebookA.addEntry(entryA);
+        JSONObject json = notebookA.toJson();
+        JSONArray entries = (JSONArray)json.get("entries");
+        JSONObject entry = (JSONObject)entries.get(0);
+        assertEquals("Word A", entry.get("word"));
+    }
+
 }

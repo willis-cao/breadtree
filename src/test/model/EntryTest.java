@@ -1,5 +1,7 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,10 +14,11 @@ class EntryTest {
 
     private Entry entryA;
     private Entry entryB;
+    List<String> tagsA;
 
     @BeforeEach
     void runBefore() {
-        List<String> tagsA = new ArrayList<>();
+        tagsA = new ArrayList<>();
         tagsA.add("tag_a");
         tagsA.add("tag_b");
         tagsA.add("tag_c");
@@ -25,9 +28,10 @@ class EntryTest {
 
     @Test
     void testConstructor() {
-        assertEquals("Word A", entryA.getWord());
-        assertEquals("Definition A", entryA.getDefinition());
-        assertEquals(3, entryA.getTags().size());
+        Entry entryC = new Entry("Word C", "Definition C", tagsA);
+        assertEquals("Word C", entryC.getWord());
+        assertEquals("Definition C", entryC.getDefinition());
+        assertEquals(3, entryC.getTags().size());
     }
 
     @Test
@@ -56,6 +60,8 @@ class EntryTest {
         entryA.addTag("tag_d");
         assertEquals(4, entryA.getTags().size());
         assertTrue(entryA.getTags().contains("tag_d"));
+        entryA.addTag("tag_d");
+        assertEquals(4, entryA.getTags().size());
     }
 
     @Test
@@ -65,4 +71,12 @@ class EntryTest {
         assertEquals("tag_z", entryA.getTags().get(4));
         assertEquals("tag_y", entryA.getTags().get(3));
     }
+
+    @Test
+    void testToJson() {
+        JSONObject json = entryA.toJson();
+        JSONArray tags = (JSONArray)json.get("tags");
+        assertEquals("tag_a", tags.get(0));
+    }
+
 }
