@@ -12,6 +12,7 @@ public class BreadtreeApp {
 
     private Scanner input;
     private int state;
+    //private List<Notebook> notebooks;
     private Breadtree breadtree;
     private Notebook currentNotebook;
 
@@ -19,21 +20,9 @@ public class BreadtreeApp {
     // EFFECTS: sets state and notebooks fields to initial values and runs the application
     public BreadtreeApp() {
         state = 0;
+        //notebooks = new ArrayList<>();
         breadtree = new Breadtree();
         runBreadtree();
-    }
-
-    // MODIFIES: this
-    // EFFECTS: creates a new notebook with the given name and adds it to the list of notebooks
-    private void makeNotebook(String name) {
-        Notebook newNotebook = new Notebook(name);
-        notebooks.add(newNotebook);
-    }
-
-    // MODIFIES: this
-    // EFFECTS: removes the given notebook from the list of notebooks
-    private void deleteNotebook(Notebook notebook) {
-        notebooks.remove(notebook);
     }
 
     // The code for console-related UI below
@@ -65,8 +54,8 @@ public class BreadtreeApp {
         input.useDelimiter("\n");
 
         //Demo notebooks
-        makeNotebook("The Cat's Teacup");
-        makeNotebook("The Crane of Gratitude");
+        breadtree.makeNotebook("The Cat's Teacup");
+        breadtree.makeNotebook("The Crane of Gratitude");
     }
 
     // EFFECTS: displays a menu depending on the current state of the application
@@ -94,6 +83,7 @@ public class BreadtreeApp {
     // including selecting, making, or deleting a notebook
     private void processCommandMainMenu(String command) {
         boolean notebookSelected = false;
+        List<Notebook> notebooks = breadtree.getNotebooks();
         for (Notebook notebook:notebooks) {
             if (command.equals(Integer.toString(notebooks.indexOf(notebook) + 1))) {
                 state = 1;
@@ -142,6 +132,7 @@ public class BreadtreeApp {
         System.out.println("\nYour notebooks:");
         String listOfNotebooksText = "";
         int notebookCounter = 1;
+        List<Notebook> notebooks = breadtree.getNotebooks();
         for (Notebook notebook:notebooks) {
             listOfNotebooksText += "\n(" + notebookCounter + ") " + notebook.getName();
             notebookCounter++;
@@ -172,7 +163,7 @@ public class BreadtreeApp {
     // EFFECTS: makes a new notebook with the given name provided by the user in the console
     private void menuMakeNotebook() {
         System.out.println("Enter the name for your new notebook:");
-        makeNotebook(input.next());
+        breadtree.makeNotebook(input.next());
     }
 
     // MODIFIES: this
@@ -181,13 +172,14 @@ public class BreadtreeApp {
         System.out.println("Enter the number of the notebook to delete");
         String selection = input.next();
         try {
+            List<Notebook> notebooks = breadtree.getNotebooks();
             Notebook selectedNotebook = notebooks.get(Integer.parseInt(selection) - 1);
             System.out.println(
                     "Are you sure you want to delete the notebook below [y/n]? This action cannot be reversed.");
             System.out.println(selectedNotebook.getName());
             selection = input.next();
             if (selection.equals("y")) {
-                deleteNotebook(selectedNotebook);
+                breadtree.deleteNotebook(selectedNotebook);
                 System.out.println("Notebook was deleted.");
             } else if (selection.equals("n")) {
                 System.out.println("Notebook was not deleted.");
