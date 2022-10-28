@@ -12,14 +12,14 @@ public class BreadtreeApp {
 
     private Scanner input;
     private int state;
-    private List<Notebook> notebooks;
+    private Breadtree breadtree;
     private Notebook currentNotebook;
 
     // MODIFIES: this
     // EFFECTS: sets state and notebooks fields to initial values and runs the application
     public BreadtreeApp() {
         state = 0;
-        notebooks = new ArrayList<>();
+        breadtree = new Breadtree();
         runBreadtree();
     }
 

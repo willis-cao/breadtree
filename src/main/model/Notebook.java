@@ -1,10 +1,14 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 //Represents a notebook containing a list of words learned from a book
-public class Notebook {
+public class Notebook implements Writable {
 
     private String name;
     private List<Entry> entries;
@@ -52,4 +56,24 @@ public class Notebook {
         return taggedEntries;
     }
 
+    // Adapted from CPSC 210 JsonSerializationDemo
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("name", name);
+        json.put("entries", entriesToJson());
+        return json;
+    }
+
+    // Adapted from CPSC 210 JsonSerializationDemo
+    // EFFECTS: returns list of tags as a JSON array
+    private JSONArray entriesToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Entry entry : entries) {
+            jsonArray.put(entry.toJson());
+        }
+
+        return jsonArray;
+    }
 }
