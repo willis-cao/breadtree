@@ -1,10 +1,14 @@
 package model;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import persistence.Writable;
+
 import java.util.ArrayList;
 import java.util.List;
 
 //Represents a list of notebooks
-public class Breadtree {
+public class Breadtree implements Writable {
 
     private List<Notebook> notebooks;
 
@@ -30,24 +34,24 @@ public class Breadtree {
         notebooks.remove(notebook);
     }
 
-//    // Adapted from CPSC 210 JsonSerializationDemo
-//    @Override
-//    public JSONObject toJson() {
-//        JSONObject json = new JSONObject();
-//        json.put("notebooks", notebooksToJson());
-//        return json;
-//    }
-//
-//    // Adapted from CPSC 210 JsonSerializationDemo
-//    // EFFECTS: returns list of notebooks as a JSON array
-//    private JSONArray notebooksToJson() {
-//        JSONArray jsonArray = new JSONArray();
-//
-//        for (Notebook notebook : notebooks) {
-//            jsonArray.put(notebook.toJson());
-//        }
-//
-//        return jsonArray;
-//    }
+    // Adapted from CPSC 210 JsonSerializationDemo
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("notebooks", notebooksToJson());
+        return json;
+    }
+
+    // Adapted from CPSC 210 JsonSerializationDemo
+    // EFFECTS: returns list of notebooks as a JSON array
+    private JSONArray notebooksToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (Notebook notebook : notebooks) {
+            jsonArray.put(notebook.toJson());
+        }
+
+        return jsonArray;
+    }
 
 }

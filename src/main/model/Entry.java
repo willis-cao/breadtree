@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Collections;
 
 //Represents a word, its definition, and its categorical tags
-public class Entry {
+public class Entry implements Writable {
 
     private String word;
     private String definition;
@@ -79,25 +79,26 @@ public class Entry {
         Collections.sort(tags);
     }
 
-//    // Adapted from CPSC 210 JsonSerializationDemo
-//    @Override
-//    public JSONObject toJson() {
-//        JSONObject json = new JSONObject();
-//        json.put("word", word);
-//        json.put("definition", definition);
-//        json.put("tags", tagsToJson());
-//        return json;
-//    }
-//
-//    // Adapted from CPSC 210 JsonSerializationDemo
-//    // EFFECTS: returns list of tags as a JSON array
-//    private JSONArray tagsToJson() {
-//        JSONArray jsonArray = new JSONArray();
-//
-//        for (String tag : tags) {
-//            jsonArray.put(tag);
-//        }
-//
-//        return jsonArray;
-//    }
+    // Adapted from CPSC 210 JsonSerializationDemo
+    @Override
+    public JSONObject toJson() {
+        JSONObject json = new JSONObject();
+        json.put("word", word);
+        json.put("definition", definition);
+        json.put("tags", tagsToJson());
+        return json;
+    }
+
+    // Adapted from CPSC 210 JsonSerializationDemo
+    // EFFECTS: returns list of tags as a JSON array
+    private JSONArray tagsToJson() {
+        JSONArray jsonArray = new JSONArray();
+
+        for (String tag : tags) {
+            jsonArray.put(tag);
+        }
+
+        return jsonArray;
+    }
+
 }

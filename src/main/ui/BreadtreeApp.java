@@ -6,22 +6,34 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import persistence.JsonReader;
+import persistence.JsonWriter;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.List;
+import java.util.Scanner;
+
 //Represents a language-learning note-taking app containing a list of notebooks,
 //each of which contains a list of entries (each containing a word, definition, and tags)
 public class BreadtreeApp {
 
     private Scanner input;
     private int state;
-    //private List<Notebook> notebooks;
     private Breadtree breadtree;
     private Notebook currentNotebook;
 
+    private static final String JSON_STORE = "./data/breadtree.json";
+    private JsonWriter jsonWriter;
+    private JsonReader jsonReader;
+
     // MODIFIES: this
     // EFFECTS: sets state and notebooks fields to initial values and runs the application
-    public BreadtreeApp() {
+    public BreadtreeApp() throws FileNotFoundException {
         state = 0;
-        //notebooks = new ArrayList<>();
         breadtree = new Breadtree();
+        jsonWriter = new JsonWriter(JSON_STORE);
+        jsonReader = new JsonReader(JSON_STORE);
         runBreadtree();
     }
 
