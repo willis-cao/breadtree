@@ -32,7 +32,7 @@ public class BreadtreeApp {
         breadtree = new Breadtree();
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
-        loadWorkRoom();
+        loadBreadtree();
         runBreadtree();
     }
 
@@ -253,7 +253,7 @@ public class BreadtreeApp {
     // Adapted from CPSC 210 JsonSerializationDemo
     // MODIFIES: this
     // EFFECTS: loads breadtree from file
-    private void loadWorkRoom() {
+    private void loadBreadtree() {
         try {
             breadtree = jsonReader.read();
             System.out.println("Loaded from " + JSON_STORE);

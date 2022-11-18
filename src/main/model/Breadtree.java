@@ -22,6 +22,17 @@ public class Breadtree implements Writable {
         return notebooks;
     }
 
+    // REQUIRES: a notebook with the given name exists
+    // EFFECTS: returns the notebook with the given name
+    public Notebook getNotebookByName(String name) {
+        for (Notebook notebook:notebooks) {
+            if (notebook.getName().equals(name)) {
+                return notebook;
+            }
+        }
+        return null;
+    }
+
     // MODIFIES: this
     // EFFECTS: adds the given notebook to the list of notebooks
     // (for persistence)

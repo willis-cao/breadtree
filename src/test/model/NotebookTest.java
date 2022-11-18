@@ -62,6 +62,17 @@ class NotebookTest {
     }
 
     @Test
+    void testGetAllTags() {
+        notebookA.addEntry(entryA);
+        notebookA.addEntry(entryB);
+        notebookA.addEntry(entryC);
+        assertEquals("apple", notebookA.getAllTags().get(0));
+        assertEquals("banana", notebookA.getAllTags().get(1));
+        assertEquals("orange", notebookA.getAllTags().get(2));
+        assertEquals(3, notebookA.getAllTags().size());
+    }
+
+    @Test
     void testGetEntriesTagged() {
         notebookA.addEntry(entryA);
         notebookA.addEntry(entryB);

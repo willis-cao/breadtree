@@ -27,6 +27,13 @@ class BreadtreeTest {
     }
 
     @Test
+    void testGetNotebookByName() {
+        breadtreeA.addNotebook(notebookA);
+        assertEquals("Notebook A", breadtreeA.getNotebookByName("Notebook A").getName());
+        assertEquals(null, breadtreeA.getNotebookByName("Notebook B"));
+    }
+
+    @Test
     void testAddNotebook() {
         breadtreeA.addNotebook(notebookA);
         assertEquals(notebookA, breadtreeA.getNotebooks().get(0));

@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import persistence.Writable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 //Represents a notebook containing a list of words learned from a book
@@ -47,6 +48,20 @@ public class Notebook implements Writable {
     // EFFECTS: deletes a given entry from the notebook
     public void deleteEntry(Entry entry) {
         entries.remove(entry);
+    }
+
+    // EFFECTS: returns a sorted list of all tags in the notebook
+    public List<String> getAllTags() {
+        List<String> tags = new ArrayList<>();
+        for (Entry entry:entries) {
+            for (String tag:entry.getTags()) {
+                if (!tags.contains(tag)) {
+                    tags.add(tag);
+                }
+            }
+        }
+        Collections.sort(tags);
+        return tags;
     }
 
     // EFFECTS: takes a given list of tags and returns a list of all entries in the notebook
