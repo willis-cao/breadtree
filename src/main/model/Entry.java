@@ -7,7 +7,7 @@ import persistence.Writable;
 import java.util.List;
 import java.util.Collections;
 
-//Represents a word, its definition, and its categorical tags
+// Represents a word, its definition, and its categorical tags
 public class Entry implements Writable {
 
     private String word;

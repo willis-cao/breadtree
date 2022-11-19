@@ -25,3 +25,18 @@ in one or more notebooks through flashcards (to be implemented in the future).
 in a notebook.
 - (P2) As a user, I want to be able to save my notebooks to file.
 - (P2) As a user, I want to be able to load all of my notebooks from file.
+
+## Instructions for Grader
+- You can generate the first required event related to adding notebooks to your list of
+notebooks by clicking "New" at the bottom left. Then, enter the name of the new notebook
+in the prompt that appears. The new notebook should now be displayed in the tree on the
+left where you can now select it.
+- You can generate the second required event related to adding words and their definitions
+to a notebook by first selecting one of the notebooks in the tree to the left. Then, type in
+the text box at the bottom of the application in the format "word, definition, tag1, tag2, etc..."
+and press the Enter key to add it to the currently displayed notebook.
+- There are two visual components, the tree on the left displaying the list of notebooks
+and the tags found in each one, as well as the table on the right displaying the entries
+contained in the selected notebook.
+- You can save the state of my application by clicking the "Save" button at the bottom left.
+- When the application is opened, it automatically loads the saved state.

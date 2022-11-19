@@ -4,6 +4,7 @@ import model.*;
 import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
+// Represents a table model for a notebook
 class NotebookTableModel extends AbstractTableModel {
     private String[] columnNames = {"Word",
                                     "Definition",
@@ -11,6 +12,8 @@ class NotebookTableModel extends AbstractTableModel {
 
     private Object[][] data;
 
+    // MODIFIES: this
+    // EFFECTS: reads data from the given notebook and updates the table display
     public void updateDataFromNotebook(Notebook notebook) {
         List<Entry> entries = notebook.getEntries();
         Object[][] updatedData = new Object[entries.size()][3];
@@ -44,29 +47,6 @@ class NotebookTableModel extends AbstractTableModel {
 
     public Class getColumnClass(int c) {
         return getValueAt(0, c).getClass();
-    }
-
-    /*
-     * Don't need to implement this method unless your table's
-     * editable.
-     */
-    public boolean isCellEditable(int row, int col) {
-        //Note that the data/cell address is constant,
-        //no matter where the cell appears onscreen.
-        if (col < 2) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    /*
-     * Don't need to implement this method unless your table's
-     * data can change.
-     */
-    public void setValueAt(Object value, int row, int col) {
-        data[row][col] = value;
-        fireTableCellUpdated(row, col);
     }
 
 }

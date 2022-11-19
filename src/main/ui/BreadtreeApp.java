@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-//Represents a language-learning note-taking app containing a breadtree, or list of notebooks,
-//each of which contains a list of entries (each containing a word, definition, and tags)
+// Represents a language-learning note-taking app containing a breadtree, or list of notebooks,
+// each of which contains a list of entries (each containing a word, definition, and tags)
 public class BreadtreeApp {
 
     private Scanner input;

@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+
+// Represents a graphical user interface for the Breadtree application
 public class BreadtreeUI extends JFrame implements ActionListener, TreeSelectionListener, ListSelectionListener {
 
     private static final String JSON_STORE = "./data/breadtree.json";
@@ -50,6 +52,7 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     JButton deleteNotebookButton;
     JButton saveButton;
 
+    // EFFECTS: constructs and initializes a GUI for the breadtree application
     public BreadtreeUI() {
         super("Breadtree");
 
@@ -75,6 +78,8 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         setResizable(false);
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets up the "Notebooks" tab of the GUI (currently the only tab!)
     public void setupTabNotebooks() {
         //TAB 1: NOTEBOOKS TAB
         notebooksPanelVertical = new JPanel();
@@ -86,7 +91,6 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         notebooksPanelVertical.add(notebooksPanelHorizontal);
         notebooksPanelLeft = new JPanel();
         notebooksPanelLeft.setLayout(new BoxLayout(notebooksPanelLeft, BoxLayout.PAGE_AXIS));
-        //notebooksPanelLeft.setMinimumSize(new Dimension(220, 500));
         notebooksPanelLeft.setBorder(new EmptyBorder(0, 0, 5, 5));
         notebooksPanelRight = new JPanel();
         notebooksPanelRight.setLayout(new BoxLayout(notebooksPanelRight, BoxLayout.PAGE_AXIS));
@@ -101,6 +105,9 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         setupEntryField();
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets up the dynamic label at the bottom of the application that provides
+    // the user with information about the status of the application
     private void setupDynamicLabel() {
         dynamicLabel = new JLabel("");
         dynamicLabel.setText("Test text...");
@@ -110,6 +117,9 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         notebooksPanelVertical.add(dynamicLabelBox);
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets up the tree at the left of the application that represents the user's
+    // notebooks and the tags contained in each one
     private void setupTree() {
         //tree showing the list of notebooks and the tags found in each one
         treeView = new JScrollPane();
@@ -117,6 +127,8 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         createNodes();
     }
 
+    // MODIFIES: this
+    // EFFECTS: generates the nodes in the tree based on the information in the user's notebooks
     private void createNodes() {
         rootNode = new DefaultMutableTreeNode("My Notebooks");
         for (Notebook notebook:breadtree.getNotebooks()) {
@@ -135,6 +147,9 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         notebooksPanelLeft.add(treeView, 0);
     }
 
+    // REQUIRES: a node nodeName exists in the tree
+    // MODIFIES: this
+    // EFFECTS: returns a TreePath object representing the path to the node with the given name
     public TreePath getNotebookPathByNodeName(String nodeName) {
         for (int i = 0; i < rootNode.getChildCount(); i++) {
             DefaultMutableTreeNode child = (DefaultMutableTreeNode) rootNode.getChildAt(i);
@@ -145,6 +160,8 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         return null;
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets up the notebook buttons "New", "Delete", and "Save"
     private void setupButtons() {
         buttonPanel = new JPanel(new GridBagLayout());
         buttonPanel.setBorder(new TitledBorder("Notebook Options"));
@@ -174,6 +191,8 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         notebooksPanelLeft.add(buttonPanel);
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets up the table on the right of the application representing a list of entries
     private void setupTable() {
         //table containing words, definitions, and tags of the current notebook
         notebookTableModel = new NotebookTableModel();
@@ -188,6 +207,9 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         notebookTableModel.fireTableDataChanged();
     }
 
+    // MODIFIES: this
+    // EFFECTS: listener method that detects when a selection is made on the tree
+    // and changes the table display to reflect the selection made
     public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) notebookTree.getLastSelectedPathComponent();
 
@@ -221,18 +243,22 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: to do...
     public void valueChanged(ListSelectionEvent e) {
         return;
     }
 
+    // MODIFIES: this
+    // EFFECTS: sets up the text entry field below the table
     private void setupEntryField() {
         //text field for creating and editing entries
         entryField = new JTextField();
         entryField.addActionListener(this);
         entryField.setActionCommand("entryField");
-        JLabel entryFieldLabel = new JLabel(">");
+        entryField.setBorder(new LineBorder(Color.DARK_GRAY, 3, false));
+        JLabel entryFieldLabel = new JLabel(" >> ");
         Box entryFieldBox = Box.createHorizontalBox();
-        entryFieldBox.setBorder(new LineBorder(Color.DARK_GRAY, 3, true));
         entryFieldBox.add(entryFieldLabel);
         entryFieldBox.add(entryField);
         entryFieldBox.setMaximumSize(new Dimension(800, 1));
@@ -264,26 +290,11 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: handles text entry and button presses
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("entryField")) {
-            String[] wordComponents = entryField.getText().split("\\s*,\\s*");
-            List<String> tags = new ArrayList<>();
-            for (int i = 2; i < wordComponents.length; i++) {
-                tags.add(wordComponents[i]);
-            }
-            Entry entry = new Entry(wordComponents[0], wordComponents[1], new ArrayList<>());
-            for (String tag:tags) {
-                entry.addTag(tag);
-            }
-            currentNotebook.addEntry(entry);
-            entryField.setText("");
-            createNodes();
-            notebookTableModel.updateDataFromNotebook(currentNotebook);
-            dynamicLabel.setText("Added new entry \""
-                    + wordComponents[0]
-                    + "\" to notebook \""
-                    + currentNotebook.getName()
-                    + "\".");
+            updateEntry();
         } else if (e.getActionCommand().equals("newNotebookButton")) {
             String s = (String)JOptionPane.showInputDialog(
                     this,
@@ -316,6 +327,29 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
             dynamicLabel.setText("Save completed sucessfully.");
             saveBreadtree();
         }
+    }
+
+    // MODIFIES: this
+    // EFFECTS: parses the text in the entry field and adds it as a new entry to the current notebook
+    private void updateEntry() {
+        String[] wordComponents = entryField.getText().split("\\s*,\\s*");
+        List<String> tags = new ArrayList<>();
+        for (int i = 2; i < wordComponents.length; i++) {
+            tags.add(wordComponents[i]);
+        }
+        Entry entry = new Entry(wordComponents[0], wordComponents[1], new ArrayList<>());
+        for (String tag:tags) {
+            entry.addTag(tag);
+        }
+        currentNotebook.addEntry(entry);
+        entryField.setText("");
+        createNodes();
+        notebookTableModel.updateDataFromNotebook(currentNotebook);
+        dynamicLabel.setText("Added new entry \""
+                + wordComponents[0]
+                + "\" to notebook \""
+                + currentNotebook.getName()
+                + "\".");
     }
 
     public static void main(String[] args) {

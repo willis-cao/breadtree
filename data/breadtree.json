@@ -2,59 +2,147 @@
     {
         "entries": [
             {
-                "definition": "def1",
-                "word": "word1",
-                "tags": [
-                    "tag1",
-                    "tag2",
-                    "tag3"
-                ]
+                "definition": "hello",
+                "word": "hola",
+                "tags": ["common words"]
             },
             {
-                "definition": "def2",
-                "word": "word2",
-                "tags": [
-                    "tag1",
-                    "tag2"
-                ]
+                "definition": "goodbye",
+                "word": "adiós",
+                "tags": ["common words"]
             },
             {
-                "definition": "def3",
-                "word": "word3",
-                "tags": ["tag4"]
+                "definition": "please",
+                "word": "por favor",
+                "tags": ["common words"]
+            },
+            {
+                "definition": "thank you",
+                "word": "gracias",
+                "tags": ["common words"]
+            },
+            {
+                "definition": "sorry",
+                "word": "lo siento",
+                "tags": ["common words"]
+            },
+            {
+                "definition": "yes",
+                "word": "sí",
+                "tags": ["common words"]
+            },
+            {
+                "definition": "no",
+                "word": "no",
+                "tags": ["common words"]
+            },
+            {
+                "definition": "who",
+                "word": "¿Quién?",
+                "tags": ["question words"]
+            },
+            {
+                "definition": "what",
+                "word": "¿Qué?",
+                "tags": ["question words"]
+            },
+            {
+                "definition": "to be",
+                "word": "ser",
+                "tags": ["verbs"]
+            },
+            {
+                "definition": "to go",
+                "word": "ir",
+                "tags": ["verbs"]
+            },
+            {
+                "definition": "to have",
+                "word": "tener",
+                "tags": ["verbs"]
             }
         ],
-        "name": "The Cat's Teacup"
-    },
-    {
-        "entries": [{
-            "definition": "def4",
-            "word": "word4",
-            "tags": ["tag100"]
-        }],
-        "name": "Potato Notes"
+        "name": "Spanish 1"
     },
     {
         "entries": [
             {
-                "definition": "love",
-                "word": "i",
+                "definition": "station",
+                "word": "駅",
+                "tags": ["places"]
+            },
+            {
+                "definition": "town",
+                "word": "町",
+                "tags": ["places"]
+            },
+            {
+                "definition": "delicious",
+                "word": "美味しい",
+                "tags": ["adjectives"]
+            },
+            {
+                "definition": "small",
+                "word": "小さい",
+                "tags": ["adjectives"]
+            },
+            {
+                "definition": "big",
+                "word": "大きい",
+                "tags": ["adjectives"]
+            },
+            {
+                "definition": "very",
+                "word": "とても",
+                "tags": ["adverbs"]
+            }
+        ],
+        "name": "Japanese 1"
+    },
+    {
+        "entries": [
+            {
+                "definition": "refrigerator",
+                "word": "冷蔵庫",
+                "tags": ["appliances"]
+            },
+            {
+                "definition": "freezer",
+                "word": "冷凍庫",
+                "tags": ["appliances"]
+            },
+            {
+                "definition": "waiter/waitress",
+                "word": "店員",
                 "tags": [
-                    "blue",
-                    "carrots",
-                    "red"
+                    "people",
+                    "restaurant"
                 ]
             },
             {
-                "definition": "love",
-                "word": "i also",
+                "definition": "doctor",
+                "word": "医師",
+                "tags": ["people"]
+            },
+            {
+                "definition": "menu",
+                "word": "メニュー",
+                "tags": ["restaurant"]
+            },
+            {
+                "definition": "grandma",
+                "word": "祖母",
                 "tags": [
-                    "blue",
-                    "carrots",
-                    "red"
+                    "family",
+                    "people"
                 ]
+            },
+            {
+                "definition": "family",
+                "word": "家族",
+                "tags": ["family"]
             }
         ],
-        "name": "Carrots"
+        "name": "Common Japanese Nouns"
     }
 ]}

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//Represents a notebook containing a list of words learned from a book
+// Represents a notebook containing a list of words learned from a book
 public class Notebook implements Writable {
 
     private String name;
