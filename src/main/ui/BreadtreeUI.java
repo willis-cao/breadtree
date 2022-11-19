@@ -212,21 +212,14 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     // and changes the table display to reflect the selection made
     public void valueChanged(TreeSelectionEvent e) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) notebookTree.getLastSelectedPathComponent();
-
-        if (node == null) {
-            //Nothing is selected.
-            return;
-        }
-
         Object nodeInfo = node.getUserObject();
-        if (node.isRoot()) {
+        if (node == null || node.isRoot()) {
             return;
         } else if (((DefaultMutableTreeNode) node.getParent()).isRoot()) {
             String notebook = (String) nodeInfo;
             currentNotebook = breadtree.getNotebookByName(notebook);
             notebookTableModel.updateDataFromNotebook(currentNotebook);
             dynamicLabel.setText("Current notebook: " + notebook);
-            isViewingNotebook = true;
         } else if (node.isLeaf()) {
             String tag = (String) nodeInfo;
             List<String> tagInList = new ArrayList<>();
@@ -239,7 +232,6 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
             notebookTableModel.updateDataFromNotebook(filteredParentNotebook);
             dynamicLabel.setText("Viewing entries tagged \"" + tag + "\" in notebook \"" + parentNodeInfo
                     + "\". Entries cannot be edited in this view.");
-            isViewingNotebook = false;
         }
     }
 
@@ -296,33 +288,9 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         if (e.getActionCommand().equals("entryField")) {
             updateEntry();
         } else if (e.getActionCommand().equals("newNotebookButton")) {
-            String s = (String)JOptionPane.showInputDialog(
-                    this,
-                    "Enter a name for your new notebook:",
-                    "New Notebook",
-                    JOptionPane.PLAIN_MESSAGE,
-                    null,
-                    null,
-                    null);
-
-            if ((s != null) && (s.length() > 0)) {
-                dynamicLabel.setText("Created new notebook \"" + s + "\" successfully.");
-                breadtree.makeNotebook(s);
-                createNodes();
-                notebookTree.setSelectionPath(getNotebookPathByNodeName(s));
-            }
+            askNewNotebook();
         } else if (e.getActionCommand().equals("deleteNotebookButton")) {
-            int n = JOptionPane.showConfirmDialog(
-                    this,
-                    "Delete notebook \"" + currentNotebook.getName() + "\"?",
-                    "",
-                    JOptionPane.YES_NO_OPTION);
-            if (n == JOptionPane.YES_OPTION) {
-                dynamicLabel.setText("Deleted notebook \"" + currentNotebook.getName() + "\" successfully.");
-                breadtree.deleteNotebook(currentNotebook);
-                currentNotebook = null;
-                createNodes();
-            }
+            askDeleteNotebook();
         } else if (e.getActionCommand().equals("saveButton")) {
             dynamicLabel.setText("Save completed sucessfully.");
             saveBreadtree();
@@ -350,6 +318,32 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
                 + "\" to notebook \""
                 + currentNotebook.getName()
                 + "\".");
+    }
+
+    private void askNewNotebook() {
+        String s = (String)JOptionPane.showInputDialog(this, "Enter a name for your new notebook:",
+                "New Notebook", JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+        if ((s != null) && (s.length() > 0)) {
+            dynamicLabel.setText("Created new notebook \"" + s + "\" successfully.");
+            breadtree.makeNotebook(s);
+            createNodes();
+            notebookTree.setSelectionPath(getNotebookPathByNodeName(s));
+        }
+    }
+
+    private void askDeleteNotebook() {
+        int n = JOptionPane.showConfirmDialog(
+                this,
+                "Delete notebook \"" + currentNotebook.getName() + "\"?",
+                "",
+                JOptionPane.YES_NO_OPTION);
+        if (n == JOptionPane.YES_OPTION) {
+            dynamicLabel.setText("Deleted notebook \"" + currentNotebook.getName() + "\" successfully.");
+            breadtree.deleteNotebook(currentNotebook);
+            currentNotebook = null;
+            createNodes();
+        }
     }
 
     public static void main(String[] args) {

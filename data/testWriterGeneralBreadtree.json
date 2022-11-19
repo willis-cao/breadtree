@@ -1,0 +1,8 @@
+{"notebooks": [{
+    "entries": [{
+        "definition": "definition",
+        "word": "word",
+        "tags": ["tag"]
+    }],
+    "name": "Notebook"
+}]}
