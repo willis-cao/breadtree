@@ -5,6 +5,7 @@ import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 // Represents a table model for a notebook
+// ADAPTED FROM https://docs.oracle.com/javase/tutorial/uiswing/components/table.html
 class NotebookTableModel extends AbstractTableModel {
     private String[] columnNames = {"Word",
                                     "Definition",
