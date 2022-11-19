@@ -23,6 +23,7 @@ class NotebookTableModel extends AbstractTableModel {
         }
 
         data = updatedData;
+        fireTableDataChanged();
     }
 
     public int getColumnCount() {

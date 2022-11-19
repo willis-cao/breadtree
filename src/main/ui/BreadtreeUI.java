@@ -5,11 +5,14 @@ import persistence.JsonReader;
 import persistence.JsonWriter;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeSelectionModel;
+import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BreadtreeUI extends JFrame implements ActionListener, TreeSelectionListener {
+public class BreadtreeUI extends JFrame implements ActionListener, TreeSelectionListener, ListSelectionListener {
 
     private static final String JSON_STORE = "./data/breadtree.json";
     private JsonWriter jsonWriter;
@@ -29,13 +32,15 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     private boolean isViewingNotebook;
 
     JTabbedPane tabbedPane;
-    JPanel notebooksPanel;
+    JPanel notebooksPanelVertical;
+    JPanel notebooksPanelHorizontal;
     JPanel notebooksPanelLeft;
     JPanel notebooksPanelRight;
     DefaultMutableTreeNode rootNode;
     JTree notebookTree;
     JScrollPane treeView;
     JTable notebookTable;
+    ListSelectionModel tableSelectionModel;
     JScrollPane tableView;
     NotebookTableModel notebookTableModel;
     JLabel dynamicLabel;
@@ -68,31 +73,41 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);
-
-        // (color for debugging)
-//        notebooksPanelLeft.setBackground(Color.BLUE);
-//        notebooksPanelRight.setBackground(Color.RED);
     }
 
     public void setupTabNotebooks() {
         //TAB 1: NOTEBOOKS TAB
-        notebooksPanel = new JPanel();
-        notebooksPanel.setLayout(new BoxLayout(notebooksPanel, BoxLayout.LINE_AXIS));
-        tabbedPane.addTab("Notebooks", notebooksPanel);
+        notebooksPanelVertical = new JPanel();
+        notebooksPanelVertical.setLayout(new BoxLayout(notebooksPanelVertical, BoxLayout.PAGE_AXIS));
+        notebooksPanelVertical.setBorder(new EmptyBorder(5, 5, 5, 5));
+        tabbedPane.addTab("Notebooks", notebooksPanelVertical);
+        notebooksPanelHorizontal = new JPanel();
+        notebooksPanelHorizontal.setLayout(new BoxLayout(notebooksPanelHorizontal, BoxLayout.LINE_AXIS));
+        notebooksPanelVertical.add(notebooksPanelHorizontal);
         notebooksPanelLeft = new JPanel();
         notebooksPanelLeft.setLayout(new BoxLayout(notebooksPanelLeft, BoxLayout.PAGE_AXIS));
-        notebooksPanelLeft.setMinimumSize(new Dimension(220, 500));
+        //notebooksPanelLeft.setMinimumSize(new Dimension(220, 500));
+        notebooksPanelLeft.setBorder(new EmptyBorder(0, 0, 5, 5));
         notebooksPanelRight = new JPanel();
         notebooksPanelRight.setLayout(new BoxLayout(notebooksPanelRight, BoxLayout.PAGE_AXIS));
+        notebooksPanelRight.setBorder(new EmptyBorder(0, 5, 5, 0));
+        notebooksPanelHorizontal.add(notebooksPanelLeft);
+        notebooksPanelHorizontal.add(notebooksPanelRight);
 
-        notebooksPanel.add(notebooksPanelLeft);
-        notebooksPanel.add(notebooksPanelRight);
-
-        setupTree();
-        setupTable();
         setupDynamicLabel();
-        setupEntryField();
+        setupTree();
         setupButtons();
+        setupTable();
+        setupEntryField();
+    }
+
+    private void setupDynamicLabel() {
+        dynamicLabel = new JLabel("");
+        dynamicLabel.setText("Test text...");
+        Box dynamicLabelBox = Box.createHorizontalBox();
+        dynamicLabelBox.add(dynamicLabel);
+        dynamicLabelBox.add(Box.createHorizontalGlue());
+        notebooksPanelVertical.add(dynamicLabelBox);
     }
 
     private void setupTree() {
@@ -120,35 +135,19 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         notebooksPanelLeft.add(treeView, 0);
     }
 
-    private void setupTable() {
-        //table containing words, definitions, and tags of the current notebook
-        notebookTableModel = new NotebookTableModel();
-        notebookTable = new JTable(notebookTableModel);
-        tableView = new JScrollPane(notebookTable);
-        notebooksPanelRight.add(tableView);
-        notebookTableModel.updateDataFromNotebook(currentNotebook);
-        notebookTableModel.fireTableDataChanged();
-    }
-
-    private void setupDynamicLabel() {
-        dynamicLabel = new JLabel("");
-        dynamicLabel.setText("Test text...");
-        notebooksPanelRight.add(dynamicLabel);
-    }
-
-    private void setupEntryField() {
-        //text field for creating and editing entries
-        entryField = new JTextField();
-        notebooksPanelRight.add(entryField);
-        entryField.addActionListener(this);
-        entryField.setActionCommand("entryField");
+    public TreePath getNotebookPathByNodeName(String nodeName) {
+        for (int i = 0; i < rootNode.getChildCount(); i++) {
+            DefaultMutableTreeNode child = (DefaultMutableTreeNode) rootNode.getChildAt(i);
+            if (child.getUserObject().equals(nodeName)) {
+                return new TreePath(child.getPath());
+            }
+        }
+        return null;
     }
 
     private void setupButtons() {
-
         buttonPanel = new JPanel(new GridBagLayout());
         buttonPanel.setBorder(new TitledBorder("Notebook Options"));
-        buttonPanel.setMaximumSize(new Dimension(220, 200));
 
         newNotebookButton = new JButton("New");
         newNotebookButton.addActionListener(this);
@@ -160,26 +159,84 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         saveButton.addActionListener(this);
         saveButton.setActionCommand("saveButton");
 
-        GridBagConstraints c1 = new GridBagConstraints();
-        c1.fill = GridBagConstraints.HORIZONTAL;
-        c1.weightx = 0.5;
-        c1.gridy = 0;
-        buttonPanel.add(newNotebookButton, c1);
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.weightx = 0.5;
+        c.gridy = 0;
+        buttonPanel.add(newNotebookButton, c);
 
-        GridBagConstraints c2 = new GridBagConstraints();
-        c2.fill = GridBagConstraints.HORIZONTAL;
-        c2.weightx = 0.5;
-        c2.gridy = 1;
-        buttonPanel.add(deleteNotebookButton, c2);
+        c.gridy = 1;
+        buttonPanel.add(deleteNotebookButton, c);
 
-        GridBagConstraints c3 = new GridBagConstraints();
-        c3.fill = GridBagConstraints.HORIZONTAL;
-        c3.weightx = 0.5;
-        c3.gridy = 2;
-
-        buttonPanel.add(saveButton, c3);
+        c.gridy = 2;
+        buttonPanel.add(saveButton, c);
 
         notebooksPanelLeft.add(buttonPanel);
+    }
+
+    private void setupTable() {
+        //table containing words, definitions, and tags of the current notebook
+        notebookTableModel = new NotebookTableModel();
+        notebookTable = new JTable(notebookTableModel);
+        notebookTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableSelectionModel = notebookTable.getSelectionModel();
+        tableSelectionModel.addListSelectionListener(this);
+        notebookTable.setSelectionModel(tableSelectionModel);
+        tableView = new JScrollPane(notebookTable);
+        notebooksPanelRight.add(tableView);
+        notebookTableModel.updateDataFromNotebook(currentNotebook);
+        notebookTableModel.fireTableDataChanged();
+    }
+
+    public void valueChanged(TreeSelectionEvent e) {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) notebookTree.getLastSelectedPathComponent();
+
+        if (node == null) {
+            //Nothing is selected.
+            return;
+        }
+
+        Object nodeInfo = node.getUserObject();
+        if (node.isRoot()) {
+            return;
+        } else if (((DefaultMutableTreeNode) node.getParent()).isRoot()) {
+            String notebook = (String) nodeInfo;
+            currentNotebook = breadtree.getNotebookByName(notebook);
+            notebookTableModel.updateDataFromNotebook(currentNotebook);
+            dynamicLabel.setText("Current notebook: " + notebook);
+            isViewingNotebook = true;
+        } else if (node.isLeaf()) {
+            String tag = (String) nodeInfo;
+            List<String> tagInList = new ArrayList<>();
+            tagInList.add(tag);
+            DefaultMutableTreeNode parentNotebookNode = (DefaultMutableTreeNode) node.getParent();
+            Object parentNodeInfo = parentNotebookNode.getUserObject();
+            Notebook parentNotebook = breadtree.getNotebookByName((String) parentNodeInfo);
+            currentNotebook = parentNotebook;
+            Notebook filteredParentNotebook = new Notebook("", parentNotebook.getEntriesTagged(tagInList));
+            notebookTableModel.updateDataFromNotebook(filteredParentNotebook);
+            dynamicLabel.setText("Viewing entries tagged \"" + tag + "\" in notebook \"" + parentNodeInfo
+                    + "\". Entries cannot be edited in this view.");
+            isViewingNotebook = false;
+        }
+    }
+
+    public void valueChanged(ListSelectionEvent e) {
+        return;
+    }
+
+    private void setupEntryField() {
+        //text field for creating and editing entries
+        entryField = new JTextField();
+        entryField.addActionListener(this);
+        entryField.setActionCommand("entryField");
+        JLabel entryFieldLabel = new JLabel(">");
+        Box entryFieldBox = Box.createHorizontalBox();
+        entryFieldBox.setBorder(new LineBorder(Color.DARK_GRAY, 3, true));
+        entryFieldBox.add(entryFieldLabel);
+        entryFieldBox.add(entryField);
+        entryFieldBox.setMaximumSize(new Dimension(800, 1));
+        notebooksPanelRight.add(entryFieldBox);
     }
 
     // Adapted from CPSC 210 JsonSerializationDemo
@@ -207,42 +264,26 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         }
     }
 
-    public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) notebookTree.getLastSelectedPathComponent();
-
-        if (node == null) {
-            //Nothing is selected.
-            return;
-        }
-
-        Object nodeInfo = node.getUserObject();
-        if (node.isRoot()) {
-            return;
-        } else if (((DefaultMutableTreeNode) node.getParent()).isRoot()) {
-            String notebook = (String) nodeInfo;
-            currentNotebook = breadtree.getNotebookByName(notebook);
-            notebookTableModel.updateDataFromNotebook(currentNotebook);
-            notebookTableModel.fireTableDataChanged();
-            dynamicLabel.setText("Current notebook: " + notebook);
-        } else if (node.isLeaf()) {
-            String tag = (String) nodeInfo;
-            List<String> tagInList = new ArrayList<>();
-            tagInList.add(tag);
-            DefaultMutableTreeNode parentNotebookNode = (DefaultMutableTreeNode) node.getParent();
-            Object parentNodeInfo = parentNotebookNode.getUserObject();
-            Notebook parentNotebook = breadtree.getNotebookByName((String) parentNodeInfo);
-            currentNotebook = parentNotebook;
-            Notebook filteredParentNotebook = new Notebook("", parentNotebook.getEntriesTagged(tagInList));
-            notebookTableModel.updateDataFromNotebook(filteredParentNotebook);
-            notebookTableModel.fireTableDataChanged();
-            dynamicLabel.setText("Viewing entries tagged \"" + tag + "\" in notebook \"" + parentNodeInfo
-                    + "\". Entries cannot be edited in this view.");
-        }
-    }
-
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("entryField")) {
-            System.out.println(entryField.getText());
+            String[] wordComponents = entryField.getText().split("\\s*,\\s*");
+            List<String> tags = new ArrayList<>();
+            for (int i = 2; i < wordComponents.length; i++) {
+                tags.add(wordComponents[i]);
+            }
+            Entry entry = new Entry(wordComponents[0], wordComponents[1], new ArrayList<>());
+            for (String tag:tags) {
+                entry.addTag(tag);
+            }
+            currentNotebook.addEntry(entry);
+            entryField.setText("");
+            createNodes();
+            notebookTableModel.updateDataFromNotebook(currentNotebook);
+            dynamicLabel.setText("Added new entry \""
+                    + wordComponents[0]
+                    + "\" to notebook \""
+                    + currentNotebook.getName()
+                    + "\".");
         } else if (e.getActionCommand().equals("newNotebookButton")) {
             String s = (String)JOptionPane.showInputDialog(
                     this,
@@ -254,8 +295,10 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
                     null);
 
             if ((s != null) && (s.length() > 0)) {
+                dynamicLabel.setText("Created new notebook \"" + s + "\" successfully.");
                 breadtree.makeNotebook(s);
                 createNodes();
+                notebookTree.setSelectionPath(getNotebookPathByNodeName(s));
             }
         } else if (e.getActionCommand().equals("deleteNotebookButton")) {
             int n = JOptionPane.showConfirmDialog(
@@ -264,12 +307,14 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
                     "",
                     JOptionPane.YES_NO_OPTION);
             if (n == JOptionPane.YES_OPTION) {
+                dynamicLabel.setText("Deleted notebook \"" + currentNotebook.getName() + "\" successfully.");
                 breadtree.deleteNotebook(currentNotebook);
+                currentNotebook = null;
                 createNodes();
             }
         } else if (e.getActionCommand().equals("saveButton")) {
-            saveBreadtree();
             dynamicLabel.setText("Save completed sucessfully.");
+            saveBreadtree();
         }
     }
 
