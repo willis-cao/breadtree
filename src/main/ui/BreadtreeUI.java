@@ -320,6 +320,9 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
                 + "\".");
     }
 
+    // MODIFIES: this
+    // EFFECTS: brings up a dialog prompt asking the user to input a notebook name
+    // and creates a new notebook with the given name
     private void askNewNotebook() {
         String s = (String)JOptionPane.showInputDialog(this, "Enter a name for your new notebook:",
                 "New Notebook", JOptionPane.PLAIN_MESSAGE, null, null, null);
@@ -332,6 +335,9 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         }
     }
 
+    // MODIFIES: this
+    // EFFECTS: brings up a dialog prompt confirming if the user would like to delete the selected notebook
+    // and if yes, deletes the selected notebook
     private void askDeleteNotebook() {
         int n = JOptionPane.showConfirmDialog(
                 this,
