@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.NotebookExistsException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,8 +42,21 @@ class BreadtreeTest {
 
     @Test
     void testMakeNotebook() {
-        breadtreeA.makeNotebook("Notebook B");
+        try {
+            breadtreeA.makeNotebook("Notebook B");
+        } catch (NotebookExistsException e) {
+            fail();
+        }
         assertEquals("Notebook B", breadtreeA.getNotebooks().get(0).getName());
+
+        try {
+            breadtreeA.makeNotebook("Notebook B");
+            fail();
+        } catch (NotebookExistsException e) {
+
+        }
+        assertEquals(1, breadtreeA.getNotebooks().size());
+
     }
 
     @Test

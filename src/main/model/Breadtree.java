@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.*;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
@@ -41,10 +43,14 @@ public class Breadtree implements Writable {
 
     // MODIFIES: this
     // EFFECTS: creates a new notebook with the given name and adds it to the list of notebooks
-    public void makeNotebook(String name) {
-        Notebook newNotebook = new Notebook(name);
-        EventLog.getInstance().logEvent(new Event("Notebook \"" + name + "\" was created."));
-        addNotebook(newNotebook);
+    public void makeNotebook(String name) throws NotebookExistsException {
+        if (getNotebookByName(name) != null) {
+            throw new NotebookExistsException();
+        } else {
+            Notebook newNotebook = new Notebook(name);
+            EventLog.getInstance().logEvent(new Event("Notebook \"" + name + "\" was created."));
+            addNotebook(newNotebook);
+        }
     }
 
     // MODIFIES: this
