@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+// Adapted from CPSC 210 AlarmSystem
 /**
- * Represents a log of alarm system events.
+ * Represents a log of Breadtree application events.
  * We use the Singleton Design Pattern to ensure that there is only
  * one EventLog in the system and that the system has global access
  * to the single instance of the EventLog.
@@ -30,8 +31,9 @@ public class EventLog implements Iterable<Event> {
      * @return  instance of EventLog
      */
     public static EventLog getInstance() {
-        if (theLog == null)
+        if (theLog == null) {
             theLog = new EventLog();
+        }
 
         return theLog;
     }

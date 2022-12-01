@@ -3,9 +3,9 @@ package model;
 import java.util.Calendar;
 import java.util.Date;
 
-
+// Adapted from CPSC 210 AlarmSystem
 /**
- * Represents an alarm system event.
+ * Represents an event in the Breadtree application.
  */
 public class Event {
     private static final int HASH_CONSTANT = 13;
@@ -34,22 +34,24 @@ public class Event {
      * Gets the description of this event.
      * @return  the description of the event
      */
-    public String getDescription () {
+    public String getDescription() {
         return description;
     }
 
     @Override
     public boolean equals(Object other) {
-        if (other == null)
+        if (other == null) {
             return false;
+        }
 
-        if (other.getClass() != this.getClass())
+        if (other.getClass() != this.getClass()) {
             return false;
+        }
 
         Event otherEvent = (Event) other;
 
-        return (this.dateLogged.equals(otherEvent.dateLogged) &&
-                this.description.equals(otherEvent.description));
+        return (this.dateLogged.equals(otherEvent.dateLogged)
+                && this.description.equals(otherEvent.description));
     }
 
     @Override
