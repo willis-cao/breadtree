@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-// Represents a notebook containing a list of words learned from a book
+// Represents a notebook containing a list of entries
 public class Notebook implements Writable {
 
     private String name;
@@ -41,6 +41,11 @@ public class Notebook implements Writable {
     // EFFECTS: adds a given entry to the notebook
     public void addEntry(Entry entry) {
         entries.add(entry);
+        EventLog.getInstance().logEvent(new Event("Entry for \""
+                + entry.getWord()
+                + "\" added to notebook \""
+                + this.getName()
+                + "\"."));
     }
 
     // REQUIRES: given entry is in the notebook
@@ -48,9 +53,14 @@ public class Notebook implements Writable {
     // EFFECTS: deletes a given entry from the notebook
     public void deleteEntry(Entry entry) {
         entries.remove(entry);
+        EventLog.getInstance().logEvent(new Event("Entry for \""
+                + entry.getWord()
+                + "\" removed from notebook \""
+                + this.getName()
+                + "\"."));
     }
 
-    // EFFECTS: returns a sorted list of all tags in the notebook
+    // EFFECTS: returns the sorted list of all tags across all entries contained in the notebook
     public List<String> getAllTags() {
         List<String> tags = new ArrayList<>();
         for (Entry entry:entries) {
@@ -65,7 +75,7 @@ public class Notebook implements Writable {
     }
 
     // EFFECTS: takes a given list of tags and returns a list of all entries in the notebook
-    // having one or more of those tags
+    // containing at least one of the tags
     public List<Entry> getEntriesTagged(List<String> tags) {
         List<Entry> taggedEntries = new ArrayList<>();
         for (Entry entry:entries) {

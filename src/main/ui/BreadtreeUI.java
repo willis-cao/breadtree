@@ -1,6 +1,8 @@
 package ui;
 
 import model.*;
+import model.Event;
+import model.EventLog;
 import persistence.JsonReader;
 import persistence.JsonWriter;
 
@@ -16,6 +18,8 @@ import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -63,7 +67,8 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
 
         currentNotebook = breadtree.getNotebooks().get(0); //placeholder notebook
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        setupEventLogOnClose();
         setPreferredSize(new Dimension(800, 600));
 
         //TABBED PANE
@@ -72,10 +77,23 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
 
         setupTabNotebooks();
 
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);
+    }
+
+    private void setupEventLogOnClose() {
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                for (Event next : EventLog.getInstance()) {
+                    System.out.println(next.toString());
+                }
+                System.exit(0);
+            }
+        });
     }
 
     // MODIFIES: this

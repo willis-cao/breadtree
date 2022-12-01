@@ -36,7 +36,7 @@ public class Entry implements Writable {
         return tags;
     }
 
-    // EFFECTS: returns a list of comma-separated tags as a String
+    // EFFECTS: returns the list of tags as a comma-separated String
     public String tagsAsString() {
         String tagAsString = "";
         for (int i = 0; i < tags.size(); i++) {

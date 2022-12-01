@@ -40,3 +40,17 @@ and the tags found in each one, as well as the table on the right displaying the
 contained in the selected notebook.
 - You can save the state of my application by clicking the "Save" button at the bottom left.
 - When the application is opened, it automatically loads the saved state.
+
+## Phase 4: Task 2
+- Wed Nov 30 21:48:06 PST 2022
+- Notebook "John's Notebook" was created.
+- Wed Nov 30 21:48:23 PST 2022
+- Entry for "word" added to notebook "John's Notebook".
+- Wed Nov 30 21:48:32 PST 2022
+- Entry for "wordle" added to notebook "John's Notebook".
+- Wed Nov 30 21:48:40 PST 2022
+- Entry for "wordoodledoo" added to notebook "John's Notebook".
+- Wed Nov 30 21:48:45 PST 2022
+- Notebook "John's Other Notebook" was created.
+- Wed Nov 30 21:48:47 PST 2022
+- Notebook "John's Other Notebook" was deleted.

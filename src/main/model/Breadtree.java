@@ -7,12 +7,12 @@ import persistence.Writable;
 import java.util.ArrayList;
 import java.util.List;
 
-// Represents a breadtree containing a list of notebooks
+// Represents a collection of notebooks
 public class Breadtree implements Writable {
 
     private List<Notebook> notebooks;
 
-    // EFFECTS: constructs a breadtree representing an (empty) list of notebooks
+    // EFFECTS: constructs a Breadtree representing an (empty) list of notebooks
     public Breadtree() {
         notebooks = new ArrayList<>();
     }
@@ -35,7 +35,6 @@ public class Breadtree implements Writable {
 
     // MODIFIES: this
     // EFFECTS: adds the given notebook to the list of notebooks
-    // (for persistence)
     public void addNotebook(Notebook notebook) {
         notebooks.add(notebook);
     }
@@ -44,13 +43,15 @@ public class Breadtree implements Writable {
     // EFFECTS: creates a new notebook with the given name and adds it to the list of notebooks
     public void makeNotebook(String name) {
         Notebook newNotebook = new Notebook(name);
-        notebooks.add(newNotebook);
+        EventLog.getInstance().logEvent(new Event("Notebook \"" + name + "\" was created."));
+        addNotebook(newNotebook);
     }
 
     // MODIFIES: this
     // EFFECTS: removes the given notebook from the list of notebooks
     public void deleteNotebook(Notebook notebook) {
         notebooks.remove(notebook);
+        EventLog.getInstance().logEvent(new Event("Notebook \"" + notebook.getName() + "\" was deleted."));
     }
 
     // Adapted from CPSC 210 JsonSerializationDemo
