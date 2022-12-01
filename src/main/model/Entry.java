@@ -61,6 +61,13 @@ public class Entry implements Writable {
     }
 
     // MODIFIES: this
+    // EFFECTS: sets the entry's tags to match the given list of tags
+    public void setTags(List<String> tags) {
+        this.tags = tags;
+        cleanTags();
+    }
+
+    // MODIFIES: this
     // EFFECTS: adds the given tag to the list of tags provided it is not a duplicate,
     // and cleans the list of tags (sets all tags to lower case and sorts alphabetically)
     public void addTag(String tag) {

@@ -88,6 +88,16 @@ public class Notebook implements Writable {
         return taggedEntries;
     }
 
+    // EFFECTS: returns the entry of the given word or null if such an entry does not exist
+    public Entry getEntryByWord(String word) {
+        for (Entry entry:entries) {
+            if (entry.getWord().equals(word)) {
+                return entry;
+            }
+        }
+        return null;
+    }
+
     // Adapted from CPSC 210 JsonSerializationDemo
     @Override
     public JSONObject toJson() {

@@ -15,6 +15,7 @@ class EntryTest {
     private Entry entryA;
     private Entry entryB;
     List<String> tagsA;
+    List<String> tagsB;
 
     @BeforeEach
     void runBefore() {
@@ -52,6 +53,17 @@ class EntryTest {
         assertEquals("Definition A", entryA.getDefinition());
         entryA.setDefinition("New Definition A");
         assertEquals("New Definition A", entryA.getDefinition());
+    }
+
+    @Test
+    void testSetTags() {
+        tagsB = new ArrayList<>();
+        tagsB.add("tag_d");
+        tagsB.add("tag_e");
+        tagsB.add("tag_f");
+        assertEquals("tag_a, tag_b, tag_c", entryA.tagsAsString());
+        entryA.setTags(tagsB);
+        assertEquals("tag_d, tag_e, tag_f", entryA.tagsAsString());
     }
 
     @Test

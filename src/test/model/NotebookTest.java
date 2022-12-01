@@ -99,6 +99,13 @@ class NotebookTest {
     }
 
     @Test
+    void testGetEntryByWord() {
+        notebookA.addEntry(entryA);
+        assertEquals(entryA, notebookA.getEntryByWord("Word A"));
+        assertNull(notebookA.getEntryByWord("Word B"));
+    }
+
+    @Test
     void testToJson() {
         notebookA.addEntry(entryA);
         JSONObject json = notebookA.toJson();

@@ -27,15 +27,17 @@ import java.util.List;
 
 
 // Represents a graphical user interface for the Breadtree application
-public class BreadtreeUI extends JFrame implements ActionListener, TreeSelectionListener, ListSelectionListener {
+public class BreadtreeUI extends JFrame implements ActionListener, TreeSelectionListener {
 
     private static final String JSON_STORE = "./data/breadtree.json";
     private JsonWriter jsonWriter;
     private JsonReader jsonReader;
 
     private Breadtree breadtree;
+
     private Notebook currentNotebook;
-    private boolean isViewingNotebook;
+    private Entry currentEntry;
+    private boolean modeEditEntry;
 
     JTabbedPane tabbedPane;
     JPanel notebooksPanelVertical;
@@ -56,34 +58,36 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     JButton deleteNotebookButton;
     JButton saveButton;
 
-    // EFFECTS: constructs and initializes a GUI for the breadtree application
+    // EFFECTS: constructs and initializes a GUI for the Breadtree application
     public BreadtreeUI() {
         super("Breadtree");
 
+        // initialize persistence
         jsonWriter = new JsonWriter(JSON_STORE);
         jsonReader = new JsonReader(JSON_STORE);
+
+        // initialize notebooks
         breadtree = new Breadtree();
         loadBreadtree();
-
         currentNotebook = breadtree.getNotebooks().get(0); //placeholder notebook
+        modeEditEntry = false;
 
+        // begin setup of graphical components!
+        setupTabbedPane();
+
+        // panel operations
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setupEventLogOnClose();
         setPreferredSize(new Dimension(800, 600));
-
-        //TABBED PANE
-        tabbedPane = new JTabbedPane();
-        add(tabbedPane);
-
-        setupTabNotebooks();
-
-
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);
+
+
     }
 
+    // EFFECTS: prints out the event log in the console when the application is closed
     private void setupEventLogOnClose() {
         this.addWindowListener(new WindowAdapter() {
             @Override
@@ -97,9 +101,16 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     }
 
     // MODIFIES: this
+    // EFFECTS: sets up the tabbed pane of the GUI
+    private void setupTabbedPane() {
+        tabbedPane = new JTabbedPane();
+        add(tabbedPane);
+        setupTabNotebooks();
+    }
+
+    // MODIFIES: this
     // EFFECTS: sets up the "Notebooks" tab of the GUI (currently the only tab!)
     public void setupTabNotebooks() {
-        //TAB 1: NOTEBOOKS TAB
         notebooksPanelVertical = new JPanel();
         notebooksPanelVertical.setLayout(new BoxLayout(notebooksPanelVertical, BoxLayout.PAGE_AXIS));
         notebooksPanelVertical.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -116,6 +127,7 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         notebooksPanelHorizontal.add(notebooksPanelLeft);
         notebooksPanelHorizontal.add(notebooksPanelRight);
 
+        // set up the components of this tab
         setupDynamicLabel();
         setupTree();
         setupButtons();
@@ -125,10 +137,10 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
 
     // MODIFIES: this
     // EFFECTS: sets up the dynamic label at the bottom of the application that provides
-    // the user with information about the status of the application
+    // the user with information about the current status of the application
     private void setupDynamicLabel() {
         dynamicLabel = new JLabel("");
-        dynamicLabel.setText("Test text...");
+        dynamicLabel.setText("Welcome to Breadtree!");
         Box dynamicLabelBox = Box.createHorizontalBox();
         dynamicLabelBox.add(dynamicLabel);
         dynamicLabelBox.add(Box.createHorizontalGlue());
@@ -139,7 +151,6 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     // EFFECTS: sets up the tree at the left of the application that represents the user's
     // notebooks and the tags contained in each one
     private void setupTree() {
-        //tree showing the list of notebooks and the tags found in each one
         treeView = new JScrollPane();
         notebooksPanelLeft.add(treeView);
         createNodes();
@@ -179,6 +190,34 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     }
 
     // MODIFIES: this
+    // EFFECTS: listener method that detects when a selection is made on the tree
+    // and changes the table display to reflect the selection made
+    public void valueChanged(TreeSelectionEvent e) {
+        DefaultMutableTreeNode node = (DefaultMutableTreeNode) notebookTree.getLastSelectedPathComponent();
+        Object nodeInfo = node.getUserObject();
+        if (node == null || node.isRoot()) {
+            return;
+        } else if (((DefaultMutableTreeNode) node.getParent()).isRoot()) {
+            String notebook = (String) nodeInfo;
+            currentNotebook = breadtree.getNotebookByName(notebook);
+            notebookTableModel.updateDataFromNotebook(currentNotebook);
+            dynamicLabel.setText("Current notebook: " + notebook);
+        } else if (node.isLeaf()) {
+            String tag = (String) nodeInfo;
+            List<String> tagInList = new ArrayList<>();
+            tagInList.add(tag);
+            DefaultMutableTreeNode parentNotebookNode = (DefaultMutableTreeNode) node.getParent();
+            Object parentNodeInfo = parentNotebookNode.getUserObject();
+            Notebook parentNotebook = breadtree.getNotebookByName((String) parentNodeInfo);
+            currentNotebook = parentNotebook;
+            Notebook filteredParentNotebook = new Notebook("", parentNotebook.getEntriesTagged(tagInList));
+            notebookTableModel.updateDataFromNotebook(filteredParentNotebook);
+            dynamicLabel.setText("Viewing entries tagged \"" + tag + "\" in notebook \"" + parentNodeInfo
+                    + "\". Entries cannot be edited in this view.");
+        }
+    }
+
+    // MODIFIES: this
     // EFFECTS: sets up the notebook buttons "New", "Delete", and "Save"
     private void setupButtons() {
         buttonPanel = new JPanel(new GridBagLayout());
@@ -212,51 +251,30 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     // MODIFIES: this
     // EFFECTS: sets up the table on the right of the application representing a list of entries
     private void setupTable() {
-        //table containing words, definitions, and tags of the current notebook
         notebookTableModel = new NotebookTableModel();
         notebookTable = new JTable(notebookTableModel);
         notebookTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        tableSelectionModel = notebookTable.getSelectionModel();
-        tableSelectionModel.addListSelectionListener(this);
-        notebookTable.setSelectionModel(tableSelectionModel);
+        notebookTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (notebookTable.getSelectedRow() != -1) {
+                    entrySelected(notebookTable.getValueAt(notebookTable.getSelectedRow(), 0).toString());
+                }
+            }
+        });
         tableView = new JScrollPane(notebookTable);
         notebooksPanelRight.add(tableView);
         notebookTableModel.updateDataFromNotebook(currentNotebook);
         notebookTableModel.fireTableDataChanged();
     }
 
-    // MODIFIES: this
-    // EFFECTS: listener method that detects when a selection is made on the tree
-    // and changes the table display to reflect the selection made
-    public void valueChanged(TreeSelectionEvent e) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) notebookTree.getLastSelectedPathComponent();
-        Object nodeInfo = node.getUserObject();
-        if (node == null || node.isRoot()) {
-            return;
-        } else if (((DefaultMutableTreeNode) node.getParent()).isRoot()) {
-            String notebook = (String) nodeInfo;
-            currentNotebook = breadtree.getNotebookByName(notebook);
-            notebookTableModel.updateDataFromNotebook(currentNotebook);
-            dynamicLabel.setText("Current notebook: " + notebook);
-        } else if (node.isLeaf()) {
-            String tag = (String) nodeInfo;
-            List<String> tagInList = new ArrayList<>();
-            tagInList.add(tag);
-            DefaultMutableTreeNode parentNotebookNode = (DefaultMutableTreeNode) node.getParent();
-            Object parentNodeInfo = parentNotebookNode.getUserObject();
-            Notebook parentNotebook = breadtree.getNotebookByName((String) parentNodeInfo);
-            currentNotebook = parentNotebook;
-            Notebook filteredParentNotebook = new Notebook("", parentNotebook.getEntriesTagged(tagInList));
-            notebookTableModel.updateDataFromNotebook(filteredParentNotebook);
-            dynamicLabel.setText("Viewing entries tagged \"" + tag + "\" in notebook \"" + parentNodeInfo
-                    + "\". Entries cannot be edited in this view.");
-        }
-    }
-
-    // MODIFIES: this
-    // EFFECTS: to do...
-    public void valueChanged(ListSelectionEvent e) {
-        return;
+    // EFFECTS:
+    private void entrySelected(String entryName) {
+        Entry entryByName = currentNotebook.getEntryByWord(entryName);
+        currentEntry = entryByName;
+        enterModeEditEntry();
+        entryField.setText(entryByName.getWord() + ", "
+                + entryByName.getDefinition() + ", "
+                + entryByName.tagsAsString());
     }
 
     // MODIFIES: this
@@ -315,6 +333,17 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         }
     }
 
+    private void enterModeEditEntry() {
+        modeEditEntry = true;
+        dynamicLabel.setText("Editing entry...");
+        entryField.setBorder(new LineBorder(Color.YELLOW, 3, false));
+    }
+
+    private void exitModeEditEntry() {
+        modeEditEntry = false;
+        entryField.setBorder(new LineBorder(Color.DARK_GRAY, 3, false));
+    }
+
     // MODIFIES: this
     // EFFECTS: parses the text in the entry field and adds it as a new entry to the current notebook
     private void updateEntry() {
@@ -323,16 +352,37 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         for (int i = 2; i < wordComponents.length; i++) {
             tags.add(wordComponents[i]);
         }
-        Entry entry = new Entry(wordComponents[0], wordComponents[1], new ArrayList<>());
+        if (modeEditEntry) {
+            editEntry(currentEntry, wordComponents, tags);
+        } else {
+            newEntry(wordComponents, tags);
+        }
+
+        entryField.setText("");
+        createNodes();
+        notebookTableModel.updateDataFromNotebook(currentNotebook);
+    }
+
+    private void editEntry(Entry entry, String[] entryString, List<String> tags) {
+        entry.setWord(entryString[0]);
+        entry.setDefinition(entryString[1]);
+        entry.setTags(tags);
+        dynamicLabel.setText("Edited entry \""
+                + entryString[0]
+                + "\" in notebook \""
+                + currentNotebook.getName()
+                + "\".");
+        exitModeEditEntry();
+    }
+
+    private void newEntry(String[] entryString, List<String> tags) {
+        Entry entry = new Entry(entryString[0], entryString[1], new ArrayList<>());
         for (String tag:tags) {
             entry.addTag(tag);
         }
         currentNotebook.addEntry(entry);
-        entryField.setText("");
-        createNodes();
-        notebookTableModel.updateDataFromNotebook(currentNotebook);
         dynamicLabel.setText("Added new entry \""
-                + wordComponents[0]
+                + entryString[0]
                 + "\" to notebook \""
                 + currentNotebook.getName()
                 + "\".");
