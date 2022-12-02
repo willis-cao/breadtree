@@ -147,7 +147,8 @@
 //            notebookCounter++;
 //        }
 //        System.out.println(listOfNotebooksText);
-//        System.out.println("\nEnter the number for the notebook you wish to access or choose from the options below:");
+//        System.out.println(
+//        "\nEnter the number for the notebook you wish to access or choose from the options below:");
 //        System.out.println("\t[m]ake a new notebook");
 //        System.out.println("\t[d]elete a notebook");
 //        System.out.println("\t[s]ave state");

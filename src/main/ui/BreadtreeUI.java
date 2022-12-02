@@ -57,7 +57,7 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     JButton saveButton;
 
     // EFFECTS: constructs and initializes a GUI for the Breadtree application
-    public BreadtreeUI() {
+    public BreadtreeUI() throws FileNotFoundException {
         super("Breadtree");
 
         // initialize persistence
@@ -497,10 +497,5 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
             currentNotebook = null;
             createNodes();
         }
-    }
-
-    // EFFECTS: initializes a new graphical user interface for the Breadtree application
-    public static void main(String[] args) {
-        new BreadtreeUI();
     }
 }

@@ -54,3 +54,12 @@ contained in the selected notebook.
 - Notebook "John's Other Notebook" was created.
 - Wed Nov 30 21:48:47 PST 2022
 - Notebook "John's Other Notebook" was deleted.
+
+## Phase 4: Task 3
+- Based on the final UML diagram, I notice that the UI class (BreadtreeUI) contains too many fields from the model package.
+- It would be preferable if the UI class instead only one association with the Breadtree
+class in the model package and for that class to have these fields instead.
+- Additionally, the UI class is quite long and could have been refactored into separate
+classes. 
+- It is not shown in this UML diagram, but the UI class implements two swing listeners
+and utilizes multiple key listeners. These could be implemented into separate classes.
