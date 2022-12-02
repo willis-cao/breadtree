@@ -1,6 +1,6 @@
 package model;
 
-import exceptions.*;
+import exceptions.NotebookExistsException;
 
 import org.json.JSONArray;
 import org.json.JSONObject;

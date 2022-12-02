@@ -1,5 +1,6 @@
 package ui;
 
+import exceptions.EntryExistsException;
 import exceptions.NotebookExistsException;
 import model.*;
 import model.Event;
@@ -382,19 +383,24 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
     // or creates a new entry
     private void updateEntry() {
         String[] wordComponents = entryField.getText().split("\\s*,\\s*");
-        List<String> tags = new ArrayList<>();
-        for (int i = 2; i < wordComponents.length; i++) {
-            tags.add(wordComponents[i]);
-        }
-        if (modeEditEntry) {
-            editEntry(currentEntry, wordComponents, tags);
+        if (wordComponents.length < 2) {
+            JOptionPane.showMessageDialog(this,
+                    "Entry is incomplete!");
         } else {
-            newEntry(wordComponents, tags);
-        }
+            List<String> tags = new ArrayList<>();
+            for (int i = 2; i < wordComponents.length; i++) {
+                tags.add(wordComponents[i]);
+            }
+            if (modeEditEntry) {
+                editEntry(currentEntry, wordComponents, tags);
+            } else {
+                newEntry(wordComponents, tags);
+            }
 
-        entryField.setText("");
-        createNodes();
-        notebookTableModel.updateDataFromNotebook(currentNotebook);
+            entryField.setText("");
+            createNodes();
+            notebookTableModel.updateDataFromNotebook(currentNotebook);
+        }
     }
 
     // MODIFIES: currentEntry, currentNotebook, this
@@ -418,12 +424,17 @@ public class BreadtreeUI extends JFrame implements ActionListener, TreeSelection
         for (String tag:tags) {
             entry.addTag(tag);
         }
-        currentNotebook.addEntry(entry);
-        dynamicLabel.setText("Added new entry \""
-                + entryString[0]
-                + "\" to notebook \""
-                + currentNotebook.getName()
-                + "\".");
+        try {
+            currentNotebook.addEntry(entry);
+            dynamicLabel.setText("Added new entry \""
+                    + entryString[0]
+                    + "\" to notebook \""
+                    + currentNotebook.getName()
+                    + "\".");
+        } catch (EntryExistsException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Entry \"" + entryString[0] + "\" already exists!");
+        }
     }
 
     // MODIFIES: currentEntry, currentNotebook, this

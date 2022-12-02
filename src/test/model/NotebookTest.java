@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.EntryExistsException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,14 +49,27 @@ class NotebookTest {
     @Test
     void testAddEntry() {
         assertEquals(0, notebookA.getEntries().size());
-        notebookA.addEntry(entryA);
+        try {
+            notebookA.addEntry(entryA);
+        } catch (EntryExistsException e) {
+            fail();
+        }
         assertEquals(1, notebookA.getEntries().size());
         assertEquals(entryA, notebookA.getEntries().get(0));
+        try {
+            notebookA.addEntry(entryA);
+            fail();
+        } catch (EntryExistsException e) {}
+        assertEquals(1, notebookA.getEntries().size());
     }
 
     @Test
     void testDeleteEntry() {
-        notebookA.addEntry(entryA);
+        try {
+            notebookA.addEntry(entryA);
+        } catch (EntryExistsException e) {
+            fail();
+        }
         assertEquals(1, notebookA.getEntries().size());
         notebookA.deleteEntry(entryA);
         assertEquals(0, notebookA.getEntries().size());
@@ -63,9 +77,13 @@ class NotebookTest {
 
     @Test
     void testGetAllTags() {
-        notebookA.addEntry(entryA);
-        notebookA.addEntry(entryB);
-        notebookA.addEntry(entryC);
+        try {
+            notebookA.addEntry(entryA);
+            notebookA.addEntry(entryB);
+            notebookA.addEntry(entryC);
+        } catch (EntryExistsException e) {
+            fail();
+        }
         assertEquals("apple", notebookA.getAllTags().get(0));
         assertEquals("banana", notebookA.getAllTags().get(1));
         assertEquals("orange", notebookA.getAllTags().get(2));
@@ -74,9 +92,13 @@ class NotebookTest {
 
     @Test
     void testGetEntriesTagged() {
-        notebookA.addEntry(entryA);
-        notebookA.addEntry(entryB);
-        notebookA.addEntry(entryC);
+        try {
+            notebookA.addEntry(entryA);
+            notebookA.addEntry(entryB);
+            notebookA.addEntry(entryC);
+        } catch (EntryExistsException e) {
+            fail();
+        }
         List<String> tagsA = new ArrayList<>();
         tagsA.add("apple");
         List<String> tagsB = new ArrayList<>();
@@ -100,14 +122,22 @@ class NotebookTest {
 
     @Test
     void testGetEntryByWord() {
-        notebookA.addEntry(entryA);
+        try {
+            notebookA.addEntry(entryA);
+        } catch (EntryExistsException e) {
+            fail();
+        }
         assertEquals(entryA, notebookA.getEntryByWord("Word A"));
         assertNull(notebookA.getEntryByWord("Word B"));
     }
 
     @Test
     void testToJson() {
-        notebookA.addEntry(entryA);
+        try {
+            notebookA.addEntry(entryA);
+        } catch (EntryExistsException e) {
+            fail();
+        }
         JSONObject json = notebookA.toJson();
         JSONArray entries = (JSONArray)json.get("entries");
         JSONObject entry = (JSONObject)entries.get(0);

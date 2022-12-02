@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.EntryExistsException;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import persistence.Writable;
@@ -39,13 +41,17 @@ public class Notebook implements Writable {
 
     // MODIFIES: this
     // EFFECTS: adds a given entry to the notebook
-    public void addEntry(Entry entry) {
-        entries.add(entry);
-        EventLog.getInstance().logEvent(new Event("Entry for \""
-                + entry.getWord()
-                + "\" added to notebook \""
-                + this.getName()
-                + "\"."));
+    public void addEntry(Entry entry) throws EntryExistsException {
+        if (getEntryByWord(entry.getWord()) != null) {
+            throw new EntryExistsException();
+        } else {
+            entries.add(entry);
+            EventLog.getInstance().logEvent(new Event("Entry for \""
+                    + entry.getWord()
+                    + "\" added to notebook \""
+                    + this.getName()
+                    + "\"."));
+        }
     }
 
     // REQUIRES: given entry is in the notebook
